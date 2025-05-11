@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  font-family: "Roboto Condensed", Arial, sans-serif;
+  font-optical-sizing: auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@layer components {
+  .inputDarkModeOverride {
+    &:-webkit-autofill {
+      box-shadow: 0 0 0 30px #1c1c1d inset;
+    }
+
+    &:-webkit-autofill:hover {
+      box-shadow: 0 0 0 30px #1c1c1d inset;
+    }
+
+    &:-webkit-autofill:focus {
+      box-shadow: 0 0 0 30px #1c1c1d inset;
+    }
+
+    &:-webkit-autofill:active {
+      box-shadow: 0 0 0 30px #1c1c1d inset;
+    }
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
