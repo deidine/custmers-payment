@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import camelcaseKeys from "camelcase-keys";
 
 import { createCustomer, getAllCustomers, getCustomerByPhoneNumber } from "@/db/queries";
-import { Customer, CustomerDTO } from "@/types/customer";
+import { Customer, CustomerCreateDTO } from "@/types/customer";
 import { formatError } from "@/utils/error-handlers";
 
 export async function POST(request: NextRequest) {
   try {
-    const data = (await request.json()) as CustomerDTO;
+    const data = (await request.json()) as CustomerCreateDTO;
       // Check if phone number already exists
-      const customer = await getCustomerByPhoneNumber(data.phoneNumber);
+      const customer = await getCustomerByPhoneNumber(data.phoneNumber||"");
       if (customer) {
         return NextResponse.json(
           { error: "Phone number already exists" },

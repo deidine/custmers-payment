@@ -59,7 +59,23 @@ phone_number VARCHAR(20) NOT NULL,
 
 ALTER TABLE customers
 ADD CONSTRAINT unique_phone_number UNIQUE (phone_number);
- 
+ ALTER TABLE customers
+  ADD COLUMN first_name VARCHAR(50) NOT NULL,
+  ADD COLUMN last_name VARCHAR(50) NOT NULL,
+  ADD COLUMN gender VARCHAR(10), -- consider using an ENUM if applicable
+  ADD COLUMN date_of_birth DATE,
+  ADD COLUMN emergency_contact VARCHAR(50),
+  ADD COLUMN emergency_phone VARCHAR(20),
+  ADD COLUMN street_address VARCHAR(255),
+  ADD COLUMN city VARCHAR(100),
+  ADD COLUMN state VARCHAR(100),
+  ADD COLUMN state_code VARCHAR(10),
+  ADD COLUMN membership_type VARCHAR(50) NOT NULL, -- or use ENUM
+  ADD COLUMN membership_start_date DATE,
+  ADD COLUMN membership_end_date DATE,
+  ADD COLUMN status VARCHAR(50) NOT NULL, -- or use ENUM
+  ADD COLUMN notes TEXT;
+
 CREATE TABLE
   IF NOT EXISTS payments (
     payment_id SERIAL PRIMARY KEY,

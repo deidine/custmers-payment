@@ -18,6 +18,33 @@ export async function getUserProfileViewByUserUuid(userUuid: string) {
   }
 }
 
+export async function getCustomerByPhoneNumber(phoneNumber: string) {
+  const query = `SELECT * FROM "public"."customers" WHERE "phone_number" = $1`;
+  try {
+    const result = await pool.query(query, [phoneNumber]);
+    return result.rows[0];
+  } catch (err: any) {
+    console.error("Database error:", err);
+    throw err;
+  }
+}
+
+export async function getCustomerByEmailAndPhoneNumber(
+  email: string,
+  phoneNumber: string
+) {
+  const query = `SELECT * FROM "public"."customers" 
+    WHERE ($1::VARCHAR IS NULL OR $1::VARCHAR = '' OR "email" = $1) 
+    AND ($2::VARCHAR IS NULL OR $2::VARCHAR = '' OR "phone_number" = $2)`;
+  try {
+    const result = await pool.query(query, [email, phoneNumber]);
+    return result.rows[0];
+  } catch (err: any) {
+    console.error("Database error:", err);
+    throw err;
+  }
+}
+
 export async function updateUserProfileByUserUuid(
   userUuid: string,
   userProfileDto: Partial<UserProfileDTO>
@@ -102,6 +129,23 @@ export async function getAllUsers(page = 1, limit = 10) {
     throw err
   }
 }
+
+export async function updateCustomerById(
+  id: number,
+  customerDto: Partial<CustomerUpdateDTO>
+): Promise<boolean | null> {
+  const query = buildUpdateQuery("customers", customerDto, {
+    findBy: "customer_id",
+  });
+  try {
+    const result = await pool.query(query, [...Object.values(customerDto), id]);
+    return result.rowCount > 0;
+  } catch (err: any) {
+    console.error("Database error:", err);
+    throw err;
+  }
+}
+
 export async function getUserByUsername(username: string) {
   const query = `SELECT * FROM "public"."vw_users_with_uuid" WHERE "username" = $1`;
   try {
@@ -367,7 +411,7 @@ export async function createCustomer(data: CustomerCreateDTO) {
       paramIndex++
     }
   })
-
+console.log(placeholders,columns)
   // Build the query
   const query = `
     INSERT INTO "public"."customers" (${columns.join(", ")}) 
