@@ -75,18 +75,48 @@ ADD CONSTRAINT unique_phone_number UNIQUE (phone_number);
   ADD COLUMN membership_end_date DATE,
   ADD COLUMN status VARCHAR(50) NOT NULL, -- or use ENUM
   ADD COLUMN notes TEXT;
+-- Table: public.payments
 
-CREATE TABLE
-  IF NOT EXISTS payments (
-    payment_id SERIAL PRIMARY KEY,
-    customer_uuid UUID,
-    payment_method VARCHAR(20) DEFAULT 'Cash', -- Cash, Credit
-    total_amount DECIMAL(10, 2) NOT NULL,
-    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_payments_customer_uuid FOREIGN KEY (customer_uuid) REFERENCES customers (uuid) ON DELETE CASCADE
-  );
+-- DROP TABLE IF EXISTS public.payments;
 
+CREATE TABLE IF NOT EXISTS public.payments
+(
+    payment_id integer NOT NULL DEFAULT nextval('payments_payment_id_seq'::regclass),
+    customer_uuid uuid,
+    payment_method character varying(20) COLLATE pg_catalog."default" DEFAULT 'Cash'::character varying,
+    total_amount numeric(10,2) NOT NULL DEFAULT 0,
+    payment_date timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    customer_id integer,
+    amount numeric(10,2),
+    payment_type character varying(20) COLLATE pg_catalog."default",
+    status character varying(20) COLLATE pg_catalog."default",
+    notes text COLLATE pg_catalog."default",
+    receipt_number character varying(50) COLLATE pg_catalog."default",
+    invoice_number character varying(50) COLLATE pg_catalog."default",
+    transaction_reference character varying(100) COLLATE pg_catalog."default",
+    created_by integer,
+    CONSTRAINT payments_pkey PRIMARY KEY (payment_id),
+    CONSTRAINT fk_payments_customer_uuid FOREIGN KEY (customer_uuid)
+        REFERENCES public.customers (uuid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.payments
+    OWNER to postgres;
+-- Index: idx_payments_customer_uuid
+
+-- DROP INDEX IF EXISTS public.idx_payments_customer_uuid;
+
+CREATE INDEX IF NOT EXISTS idx_payments_customer_uuid
+    ON public.payments USING btree
+    (customer_uuid ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+    
 CREATE INDEX idx_payments_customer_uuid ON payments (customer_uuid);
  
 CREATE VIEW vw_users_with_uuid AS

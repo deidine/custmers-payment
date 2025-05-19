@@ -98,15 +98,7 @@ export async function getAllUsers(page = 1, limit = 10) {
       u.password, 
       u.role, 
       u.is_enabled, 
-      u.gender, 
-      u.date_of_joining, 
-      u.city, 
-      u.state, 
-      u.state_code, 
-      u.street_address,
-      u.phone_number,
-      u.email,
-      u.status,
+    
       u.created_at, 
       u.updated_at 
     FROM "public"."users" u 
@@ -418,7 +410,7 @@ console.log(placeholders,columns)
     VALUES (${placeholders.join(", ")}) 
     RETURNING *
   `
-
+console.log(query,values)
   try {
     const result = await pool.query(query, values)
     return result.rows[0]
@@ -575,7 +567,7 @@ export async function createPayment(data: PaymentCreateDTO) {
     VALUES (${placeholders.join(", ")}) 
     RETURNING *
   `
-
+console.log(placeholders.join(", "),columns.join(", "))
   try {
     const result = await pool.query(query, values)
     return result.rows[0]

@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
     );
     const result: any[] =
       (camelcaseKeys(data, { deep: true }) as any[]) || [];
+      console.log(result)
     return NextResponse.json({ result, totalItems });
   } catch (error) {
     return NextResponse.json(

@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import camelcaseKeys from "camelcase-keys";
-import { PaymentDTO } from "@/types/payment";
-import { createPayment, getPaymentByOrderUuid } from "@/db/queries";
+import { PaymentCreateDTO } from "@/types/payment";
+import { createPayment, getAllPayments, getPaymentById } from "@/db/queries";
 
 export async function POST(request: NextRequest) {
   try {
-    const data = (await request.json()) as PaymentDTO;
+    const data = (await request.json()) as PaymentCreateDTO;
+    console.log("Payment created", data);
     const response = await createPayment(data);
     if (response) {
       return NextResponse.json(
@@ -26,11 +27,12 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest) { 
   try {
     const searchParams = request.nextUrl.searchParams;
     const orderUuid = searchParams.get("orderUuid") as string;
-    const response = await getPaymentByOrderUuid(orderUuid);
+    const response = await getAllPayments();
+    console.log(response)
     return NextResponse.json(camelcaseKeys(response, { deep: true }), {
       status: 200,
     });

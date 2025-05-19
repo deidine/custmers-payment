@@ -37,12 +37,13 @@ export default function PaymentDashboard() {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_API_URL}/payments?page=${page}&limit=${itemsPerPage}`,
-      )
+      ) 
+ 
       if (response.ok) {
-        const { result, totalItems } = await response.json()
-
+        const { data, totalItems } = await response.json()
+         console.log(totalItems,"deidine")
         setTotalPages(Math.ceil(totalItems / itemsPerPage))
-        setTableData(result as PaymentWithCustomer[])
+        setTableData(data as PaymentWithCustomer[])
       }
     } catch (error) {
       console.error("Error fetching data:", error)
