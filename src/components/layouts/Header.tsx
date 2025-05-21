@@ -69,7 +69,7 @@ export default function Header() {
           <div className="flex flex-wrap justify-center lg:justify-between items-center gap-4">
             <div className="flex flex-wrap justify-center items-center gap-4">
               <button className="text-gray-600 hover:text-gray-800">
-                <i className="fa-regular fa-bell"></i> Thông báo
+                <i className="fa-regular fa-bell"></i>  Notification
               </button>
  
 

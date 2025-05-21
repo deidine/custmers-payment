@@ -44,7 +44,7 @@ export default function Navbar() {
               href={"/dashboard"}
               className="bg-red-800 px-2 py-1 rounded text-white hover:bg-red-500 block"
             >
-              Quản lý chung
+              Dashboard
             </Link>
           )}
 

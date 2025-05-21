@@ -3,8 +3,7 @@ import "./globals.css";
 import Script from "next/script";
 
 import Header from "@/components/layouts/Header";
-import Footer from "@/components/layouts/Footer";
-import ParentProvider from "@/contexts/ParentProvider";
+ import ParentProvider from "@/contexts/ParentProvider";
 
 export const metadata: Metadata = {
   title: "Mua Thuốc Online | V2H Pharmacy Store - Cửa Hàng Thuốc 24/7",
@@ -30,7 +29,7 @@ export default async function RootLayout({
         <ParentProvider>
           <Header />
           <main className="relative flex-grow">{children}</main>
-          <Footer />
+       
         </ParentProvider>
       </body>
     </html>

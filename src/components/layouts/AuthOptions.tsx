@@ -27,25 +27,25 @@ export default function AuthOptions() {
       {!user ? (
         <div className="flex gap-4 items-center">
           <Link href={"/login"} className="text-blue-600 hover:text-blue-800">
-            Đăng nhập
+           sign in
           </Link>
           <Link
             href={"/register"}
             className="text-blue-600 hover:text-blue-800"
           >
-            Đăng ký
+            sign up
           </Link>
         </div>
       ) : (
         <div className="flex gap-4 items-center">
           <Link href={"/me"} className="text-blue-600 hover:text-blue-800">
-            <ProfileSVG className="w-6 h-6 inline" /> Tài khoản
+            <ProfileSVG className="w-6 h-6 inline" /> profile
           </Link>
           <div
             onClick={handleLogout}
             className="text-blue-600 hover:text-blue-800 hover:cursor-pointer"
           >
-            Đăng xuất
+            logout
           </div>
         </div>
       )}
