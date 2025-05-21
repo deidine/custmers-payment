@@ -1,5 +1,4 @@
-import { ProductFilterProvider } from "./FilterContext";
-import { CartProvider } from "./CartContext";
+ 
 import { UserProvider } from "./UserContext";
 
 export default function ParentProvider({
@@ -9,9 +8,7 @@ export default function ParentProvider({
 }) {
   return (
     <UserProvider>
-      <CartProvider>
-        <ProductFilterProvider>{children}</ProductFilterProvider>
-      </CartProvider>
+      <div>{children}</div>
     </UserProvider>
   );
 }

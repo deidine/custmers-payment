@@ -36,38 +36,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Navigation menu */}
-        <ul
-          className={`${
-            isOpen ? "block" : "hidden"
-          } sm:flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-6 w-full sm:w-auto`}
-        >
-          <li>
-            <Link href={"/"} className="text-white hover:text-gray-300 block">
-              Trang chủ
-            </Link>
-          </li>
-          <li className="hidden sm:block text-white">|</li>
-          <li>
-            <Link
-              href={"/products"}
-              className="text-white hover:text-gray-300 block"
-            >
-              Danh mục sản phẩm
-            </Link>
-          </li>
-          <li>
-            <Link href={"/"} className="text-white hover:text-gray-300 block">
-              Hệ thống nhà thuốc
-            </Link>
-          </li>
-          <li>
-            <Link href={"/"} className="text-white hover:text-gray-300 block">
-              Hỗ trợ
-            </Link>
-          </li>
-        </ul>
-
+    
         <div className="flex items-center gap-4">
           {/* Require permission to access */}
           {isAllowed && (

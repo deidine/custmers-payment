@@ -12,8 +12,8 @@ export default function FormLogin() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Get redirect URL from query parameters, fallback to '/products' if not exists
-  const redirectUrl = searchParams.get("redirectTo") || "/products";
+  // Get redirect URL from query parameters, fallback to '/dashboard' if not exists
+  const redirectUrl = searchParams.get("redirectTo") || "/dashboard";
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -7,20 +7,12 @@ import { useRouter } from "next/navigation";
 import Navbar from "./Navbar";
 import SearchBar from "../ui/SearchBar";
 import AuthOptions from "./AuthOptions";
-import { CartContextType, useCartContext } from "@/contexts/CartContext";
-import { useProductFilter } from "@/contexts/FilterContext";
-
-const ShoppingCart = dynamic(() => import("../ui/ShoppingCart"), {
-  loading: () => <div>Loading Cart...</div>,
-  ssr: false,
-});
+  
 
 export default function Header() {
   const [isVisible, setIsVisible] = useState(true);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const { state } = useCartContext() as CartContextType;
-  const { setFilters } = useProductFilter();
-
+ 
   const router = useRouter();
 
   const observerRef = useRef<HTMLDivElement | null>(null);
@@ -54,10 +46,7 @@ export default function Header() {
   };
 
   // TODO: implement search
-  const handleSearch = (searchTerm: string) => {
-    setFilters((prev) => ({ ...prev, page: 1, keyword: searchTerm }));
-    router.push("/products");
-  };
+  
 
   return (
     <>
@@ -72,8 +61,7 @@ export default function Header() {
               <h1 className="text-3xl font-bold tracking-tight text-green-600 min-w-[200px]">
                 V2H Pharmacy Store
               </h1>
-            </Link>
-            <SearchBar onSearch={handleSearch} />
+            </Link> 
           </div>
 
           <div className="lg:hidden my-4 border-t border-gray-300"></div>
@@ -83,14 +71,7 @@ export default function Header() {
               <button className="text-gray-600 hover:text-gray-800">
                 <i className="fa-regular fa-bell"></i> Thông báo
               </button>
-
-              <button
-                className="text-gray-600 hover:text-gray-800"
-                onClick={handleCardClick}
-              >
-                <i className="fa-solid fa-cart-shopping"></i> Giỏ hàng (
-                {state.cart.length})
-              </button>
+ 
 
               <AuthOptions />
             </div>
@@ -100,13 +81,7 @@ export default function Header() {
       </header>
 
       {/* Shopping cart overlay */}
-      {isCartOpen && (
-        <ShoppingCart
-          isOpen={isCartOpen}
-          onClose={() => setIsCartOpen(false)}
-        />
-      )}
-
+      
       <div ref={observerRef} className="h-1"></div>
     </>
   );

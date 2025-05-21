@@ -10,7 +10,7 @@ import { createUserAndProfileTransaction } from "@/db/transactions";
 import { UserProfileDTO } from "@/types/user-profile";
 
 export async function POST(request: NextRequest) {
-  const { username, password, fullName, address, phoneNumber } =
+  const { username, password, fullName, address,role, phoneNumber } =
     await request.json();
   // Check required fields
   if (!username || !password || !fullName || !address || !phoneNumber) {
@@ -41,6 +41,8 @@ export async function POST(request: NextRequest) {
       uuid,
       username,
       password: hashedPassword,
+      role
+      
     };
     const userProfileDto: Partial<UserProfileDTO> = {
       fullName,

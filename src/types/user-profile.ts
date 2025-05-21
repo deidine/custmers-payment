@@ -9,6 +9,7 @@ type UserProfile = {
   phoneNumber: string;
   profilePictureUrl: string;
   createdAt: Date;
+  role: Role;
   updatedAt: Date;
 };
 
@@ -19,5 +20,6 @@ export type UserProfileView = UserProfile & {
 
 export type UserProfileDTO = Omit<
   UserProfile,
+  
   "profileId" | "createdAt" | "updatedAt"
 >;

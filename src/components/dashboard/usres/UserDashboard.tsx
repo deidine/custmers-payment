@@ -13,6 +13,7 @@ import LoadingTable from "../LoadingTable"
 import Pagination from "@/components/ui/Pagination"
 import { useScrollLock } from "@/hooks/useScrollLock"
 import UserTable from "./UserTable"
+import Link from "next/link"
 
 const UserFormModal = dynamic(() => import("./UserFormModal"), {
   loading: () => <div>Loading modal...</div>,
@@ -117,9 +118,9 @@ console.log(totalItems,result,"deidine")
         {rowOptions.includes("CREATE") && (
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded flex items-center justify-center w-24 h-10 text-nowrap"
-            onClick={() => setIsCreateModalOpen(true)}
+            // onClick={() => setIsCreateModalOpen(true)}
           >
-            Add new
+         <Link href="/register">   Add new </Link>
           </button>
         )}
       </div>
