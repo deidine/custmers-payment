@@ -251,6 +251,7 @@ export default function PaymentTable({ tableData, rowOptions = [], onRefresh }: 
           isOpen={isUpdateModalOpen}
           onClose={closeModals}
           onSubmit={handleUpdateSubmit}
+          customerId={modalData.customerId}
           data={modalData}
         />
       )}

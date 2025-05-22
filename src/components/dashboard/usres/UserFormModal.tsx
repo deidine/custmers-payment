@@ -84,12 +84,13 @@ export default function UserFormModal({ mode, isOpen, onClose, onSubmit, data }:
                     <option value="false">Disabled</option>
                   </select>
                 ) : key === "password" ? (
-                  <input
-                    type="password"
-                    value={(value as string) || ""}
-                    onChange={(e) => handleInputChange(key, e.target.value)}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-                  />
+                  <></>
+                  // <input
+                  //   type="password"
+                  //   value={(value as string) || ""}
+                  //   onChange={(e) => handleInputChange(key, e.target.value)}
+                  //   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+                  // />
                 ) : (
                   <input
                     type={typeof value === "number" ? "number" : "text"}

@@ -612,7 +612,7 @@ export async function updatePayment(paymentId: number, data: PaymentUpdateDTO) {
 
   // Add paymentId to values array
   values.push(paymentId)
-
+console.log(query, values)
   try {
     const result = await pool.query(query, values)
     return result.rows[0]

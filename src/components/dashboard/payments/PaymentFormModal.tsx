@@ -101,7 +101,7 @@ export default function PaymentFormModal({ mode, isOpen, onClose, onSubmit, data
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Customer field */}
-          <div className="col-span-2 mb-3">
+{        mode !="update" &&   <div className="col-span-2 mb-3">
             <label className="block text-gray-700 text-sm font-bold mb-1">Customer</label>
             <select
               value={formData?.customerId || ""}
@@ -117,7 +117,7 @@ export default function PaymentFormModal({ mode, isOpen, onClose, onSubmit, data
                 </option>
               ))}
             </select>
-          </div>
+          </div>}
 
           {/* Payment Information */}
           <div className="col-span-2">

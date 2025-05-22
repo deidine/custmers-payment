@@ -53,7 +53,7 @@ export default function UserTable({ tableData, rowOptions = [], onRefresh }: Use
     const toastId = toast.loading("Updating user...")
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/users/${identifier}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/auth/users/${identifier}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -82,7 +82,7 @@ export default function UserTable({ tableData, rowOptions = [], onRefresh }: Use
     const toastId = toast.loading("Deleting user...")
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/users/${identifier}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/auth/users/${identifier}`, {
         method: "DELETE",
       })
 
