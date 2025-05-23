@@ -56,18 +56,23 @@ export async function middleware(request: NextRequest) {
 
   // Check role for specific pages
 
-  // if (pathname.startsWith("/dashboard")) {
-  //   if (payload.role !== "ADMIN" && payload.role !== "MANAGER") {
-  //     return NextResponse.redirect(new URL("/", request.url));
-  //   }
-  // }
+  if (pathname.startsWith("/dashboard")) {
+    if (payload.role !== "ADMIN" && payload.role !== "MANAGER") {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  }
 
-  // if (pathname.startsWith("/admin")) {
-  //   if (payload.role !== "ADMIN") {
-  //     return NextResponse.redirect(new URL("/", request.url));
-  //   }
-  // }
-
+  if (pathname.startsWith("/admin")) {
+    if (payload.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  } 
+ response.cookies.set("role", payload.role as string, {
+  path: "/",
+  httpOnly: false, // Can be read by client-side code if needed
+  sameSite: "lax",
+  secure: false,
+});
   return NextResponse.next();
 }
 

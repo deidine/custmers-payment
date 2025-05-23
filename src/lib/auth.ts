@@ -26,7 +26,17 @@ export async function decrypt(token: string) {
 export async function hashPassword(password: string) {
   return await hash(password, 10);
 }
-
+export  function getRoleCookiesToken() {
+    const token = getSessionToken() ;
+    if (!token) return null;
+      let payload;
+    
+        payload= decrypt(token!);
+   
+    
+    return payload;
+  
+}
 export async function comparePasswords(
   password: string,
   hashedPassword: string

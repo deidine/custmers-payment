@@ -478,27 +478,81 @@ export async function deleteCustomer(customerId: number) {
 }
 
 // Payment Functions
-export async function getAllPayments(page = 1, limit = 10) {
+
+type Filters = {
+  status?: string
+  dateFrom?: string
+  dateTo?: string
+  customerId?: string
+  unpaidInMonth?: string
+}
+
+export async function getAllPayments(
+  page = 1,
+  limit = 10,
+  filters: Filters = {}
+) {
   const offset = (page - 1) * limit
+
+  const whereClauses: string[] = []
+  const values: any[] = []
+  let idx = 1
+
+  // Add filters conditionally
+  if (filters.status) {
+    whereClauses.push(`p.status = $${idx++}`)
+    values.push(filters.status)
+  }
+
+  if (filters.dateFrom) {
+    whereClauses.push(`p.payment_date >= $${idx++}`)
+    values.push(filters.dateFrom)
+  }
+
+  if (filters.dateTo) {
+    whereClauses.push(`p.payment_date <= $${idx++}`)
+    values.push(filters.dateTo)
+  }
+
+  if (filters.customerId) {
+    whereClauses.push(`p.customer_id = $${idx++}`)
+    values.push(filters.customerId)
+  }
+
+  if (filters.unpaidInMonth) {
+    whereClauses.push(`p.status = 'PENDING'`)
+    whereClauses.push(`TO_CHAR(p.payment_date, 'YYYY-MM') = $${idx++}`)
+    values.push(filters.unpaidInMonth)
+  }
+
+  const where = whereClauses.length ? `WHERE ${whereClauses.join(" AND ")}` : ""
+
   const queryData = `
     SELECT 
       p.*,
       c.first_name || ' ' || c.last_name AS customer_name
     FROM "public"."payments" p
     LEFT JOIN "public"."customers" c ON p.customer_id = c.customer_id
-    ORDER BY p.payment_date DESC 
-    LIMIT $1 OFFSET $2
+    ${where}
+    ORDER BY p.payment_date DESC
+    LIMIT $${idx++} OFFSET $${idx}
   `
-  const queryCount = `SELECT COUNT(*) AS "totalItems" FROM "public"."payments"`
+
+  const queryCount = `
+    SELECT COUNT(*) AS "totalItems"
+    FROM "public"."payments" p
+    ${where}
+  `
 
   try {
-    // Parallel queries
     const [resultData, resultCount] = await Promise.all([
-      pool.query(queryData, [limit, offset]),
-      pool.query(queryCount),
+      pool.query(queryData, [...values, limit, offset]),
+      pool.query(queryCount, values),
     ])
+
     const data = resultData.rows
     const totalItems = Number.parseInt(resultCount.rows[0].totalItems, 10)
+
     return { data, totalItems }
   } catch (err: any) {
     console.error("Database error:", err)
@@ -581,13 +635,14 @@ export async function updatePayment(paymentId: number, data: PaymentUpdateDTO) {
   // Create sets for SQL update
   const updates: string[] = []
   const values: any[] = []
-  let paramIndex = 1
-
+  let paramIndex = 1 
   // Dynamically build the SET clause and values array
   Object.entries(data).forEach(([key, value]) => {
-    if (value !== undefined) {
+    if (value !== undefined ) {
       // Convert camelCase to snake_case
       const snakeKey = key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
+          if (snakeKey === 'customer_name') return
+
       updates.push(`${snakeKey} = $${paramIndex}`)
       values.push(value)
       paramIndex++
@@ -600,8 +655,7 @@ export async function updatePayment(paymentId: number, data: PaymentUpdateDTO) {
   // If no fields to update, return early
   if (updates.length === 0) {
     throw new Error("No fields to update")
-  }
-
+  } 
   // Build the query
   const query = `
     UPDATE "public"."payments"
@@ -612,7 +666,6 @@ export async function updatePayment(paymentId: number, data: PaymentUpdateDTO) {
 
   // Add paymentId to values array
   values.push(paymentId)
-console.log(query, values)
   try {
     const result = await pool.query(query, values)
     return result.rows[0]
