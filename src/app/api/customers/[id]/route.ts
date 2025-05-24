@@ -17,6 +17,7 @@ export async function GET(
       );
     }
     const response = await getCustomerById(Number(params.id));
+    console.log(response);
     return NextResponse.json(
       { ...(camelcaseKeys(response, { deep: true }) as Customer) },
       { status: 200 }

@@ -15,7 +15,7 @@ import LoadingTable from "../LoadingTable"
 import Pagination from "@/components/ui/Pagination"
 import { useScrollLock } from "@/hooks/useScrollLock"
 import PaymentTable from "./PaymentTable"
- 
+  
 const PaymentFormModal = dynamic(() => import("./PaymentFormModal"), {
   loading: () => <div>Loading modal...</div>,
   ssr: false,
@@ -24,7 +24,7 @@ const PaymentFormModal = dynamic(() => import("./PaymentFormModal"), {
 export default function PaymentDashboard() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  
+   
   const [tableData, setTableData] = useState<PaymentWithCustomer[]>([])
   const [isLoadingData, setIsLoadingData] = useState(true)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
@@ -328,7 +328,8 @@ export default function PaymentDashboard() {
           <RefreshIcon className="w-5 h-5" fill="none" stroke="white" />
         </button>
 
-        {rowOptions.includes("CREATE") && (
+        {rowOptions.includes("CREATE")  && (
+          
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded flex items-center justify-center w-32 h-10 text-nowrap"
             onClick={() => setIsCreateModalOpen(true)}
@@ -336,8 +337,7 @@ export default function PaymentDashboard() {
             Add payment
           </button>
         )}
-      </div>
-{role}
+      </div> 
       {/* Table */}
       {isLoadingData ? (
         <LoadingTable />
@@ -353,7 +353,6 @@ export default function PaymentDashboard() {
           onSubmit={handleCreateSubmit}
         />
       )}
-
       {/* Pagination */}
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
     </>

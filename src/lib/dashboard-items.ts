@@ -14,7 +14,7 @@ export const dashboardSideItems: DashboardCategory[] = [
   {
     id: DashboardCategoryEnum.CUSTOMERS,
     title: "clients",
-    options: ["UPDATE", "DELETE", "CREATE"],
+    options: ["UPDATE", "DELETE", "CREATE", "VIEW"],
   },
   {
     id: DashboardCategoryEnum.USERS,
@@ -23,7 +23,7 @@ export const dashboardSideItems: DashboardCategory[] = [
   },{ 
     id: DashboardCategoryEnum.PAYMENTS,
     title: "Payments",   
-    options: ["CREATE", "UPDATE", "DELETE" ],
+    options: ["CREATE", "UPDATE", "DELETE", "VIEW"],
   },
   
  

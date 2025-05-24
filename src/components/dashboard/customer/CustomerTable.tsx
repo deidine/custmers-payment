@@ -228,25 +228,13 @@ export default function CustomerTable({ tableData, rowOptions = [], onRefresh }:
                     </button>
                   )}
 
-                  {/* View payments button */}
-                  {rowOptions.includes("VIEW") && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        window.location.href = `/dashboard/customers/${row.customerId}/payments`
-                      }}
-                      className="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-2 py-1 text-center hover:underline flex items-center"
-                    >
-                      <CreditCard className="w-3.5 h-3.5 mr-1" /> Payments
-                    </button>
-                  )}
 
                   {/* View attendance button */}
                   {rowOptions.includes("VIEW") && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        window.location.href = `/dashboard/customers/${row.customerId}/attendance`
+                        window.location.href = `/dashboard/clentDetail/${row.customerId}`
                       }}
                       className="text-white bg-purple-600 hover:bg-purple-700 font-medium rounded-lg text-sm px-2 py-1 text-center hover:underline flex items-center"
                     >

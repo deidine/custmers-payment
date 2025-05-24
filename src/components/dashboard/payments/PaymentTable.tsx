@@ -7,6 +7,7 @@ import toast from "react-hot-toast"
 import type { PaymentWithCustomer } from "@/types/payment"
 import { useScrollLock } from "@/hooks/useScrollLock"
 import DeleteModal from "../DeleteModal"
+import { useUser } from "@/contexts/UserContext"
 
 const PaymentFormModal = dynamic(() => import("./PaymentFormModal"), {
   loading: () => <p>Loading modal...</p>,
@@ -22,6 +23,7 @@ interface PaymentTableProps {
 export default function PaymentTable({ tableData, rowOptions = [], onRefresh }: PaymentTableProps) {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const { user } = useUser();
 
   // Lock scroll when any modal is open
   useScrollLock(isUpdateModalOpen || isDeleteModalOpen)
@@ -202,7 +204,7 @@ export default function PaymentTable({ tableData, rowOptions = [], onRefresh }: 
               <td className="border border-slate-300 px-6 py-4">
                 <div className="flex items-center justify-center gap-2">
                   {/* Update button */}
-                  {rowOptions.includes("UPDATE") && (
+                  {rowOptions.includes("UPDATE") && (user?.role === "ADMIN" || user?.role === "MANAGER") && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
@@ -215,7 +217,7 @@ export default function PaymentTable({ tableData, rowOptions = [], onRefresh }: 
                   )}
 
                   {/* Delete button */}
-                  {rowOptions.includes("DELETE") && (
+                  {rowOptions.includes("DELETE")&& (user?.role === "ADMIN" || user?.role === "MANAGER")  && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
