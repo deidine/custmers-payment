@@ -52,7 +52,7 @@ export default function FormLogin() {
             htmlFor="email"
             className="block text-sm font-medium leading-6 text-gray-900"
           >
-            Tài khoản / Email
+             Email
           </label>
           <div className="mt-2">
             <input
@@ -73,7 +73,7 @@ export default function FormLogin() {
             htmlFor="password"
             className="block text-sm font-medium leading-6 text-gray-900"
           >
-            Mật khẩu
+           Mot de passe
           </label>
 
           <div className="mt-2">
@@ -95,7 +95,7 @@ export default function FormLogin() {
             href="#"
             className="font-semibold text-blue-600 hover:text-blue-500"
           >
-            Quên mật khẩu?
+            Mot de passe oublié ?
           </a>
         </div>
 
@@ -104,18 +104,18 @@ export default function FormLogin() {
             type="submit"
             className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
           >
-            Đăng nhập
+             Se connecter
           </button>
         </div>
       </form>
 
       <div className="mt-10 text-center text-sm text-gray-500">
-        Chưa có tài khoản?{" "}
+        Vous n'avez pas de compte ?{" "}
         <a
           href={"/register"}
           className="font-semibold leading-6 text-blue-600 hover:text-blue-500"
         >
-          Đăng ký
+           S'inscrire
         </a>
       </div>
     </div>

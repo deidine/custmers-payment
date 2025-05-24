@@ -141,122 +141,123 @@ export default function PaymentTable({ tableData, rowOptions = [], onRefresh }: 
     return value
   }
 
-  return (
-    <div className="relative overflow-x-auto max-w-full">
-      <table className="min-w-full bg-white border-collapse border border-slate-400">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Payment ID
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Customer
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Date
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Amount
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Method
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Type
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Status
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[120px]">
-              Options
-            </th>
+return (
+  <div className="relative overflow-x-auto max-w-full">
+    <table className="min-w-full bg-white border-collapse border border-slate-400">
+      <thead className="bg-gray-100">
+        <tr>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            ID Paiement
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Client
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Date
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Montant
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Méthode
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Type
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Statut
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[120px]">
+            Options
+          </th>
+        </tr>
+      </thead>
+
+      <tbody className="bg-white divide-y divide-gray-200">
+        {tableData.map((row, index) => (
+          <tr
+            key={index}
+            onClick={() => setIsSelectedRow(index)}
+            className={isSelectedRow === index ? "bg-blue-50" : ""}
+          >
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              {row.paymentId}
+            </td>
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              {row.customerName || `Client #${row.customerId}`}
+            </td>
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              {formatCellValue("paymentDate", row.paymentDate)}
+            </td>
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+              {formatCellValue("amount", row.amount)}
+            </td>
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              {row.paymentMethod}
+            </td>
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              {row.paymentType}
+            </td>
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm">
+              {formatCellValue("status", row.status)}
+            </td>
+            <td className="border border-slate-300 px-6 py-4">
+              <div className="flex items-center justify-center gap-2">
+                {/* Bouton de mise à jour */}
+                {rowOptions.includes("UPDATE") && (user?.role === "ADMIN" || user?.role === "MANAGER") && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      openUpdateModal(row)
+                    }}
+                    className="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
+                  >
+                    Modifier
+                  </button>
+                )}
+
+                {/* Bouton de suppression */}
+                {rowOptions.includes("DELETE") && (user?.role === "ADMIN" || user?.role === "MANAGER") && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      openDeleteModal(row)
+                    }}
+                    className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
+                  >
+                    Supprimer
+                  </button>
+                )}
+              </div>
+            </td>
           </tr>
-        </thead>
+        ))}
+      </tbody>
+    </table>
 
-        <tbody className="bg-white divide-y divide-gray-200">
-          {tableData.map((row, index) => (
-            <tr
-              key={index}
-              onClick={() => setIsSelectedRow(index)}
-              className={isSelectedRow === index ? "bg-blue-50" : ""}
-            >
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                {row.paymentId}
-              </td>
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                {row.customerName || `Customer #${row.customerId}`}
-              </td>
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                {formatCellValue("paymentDate", row.paymentDate)}
-              </td>
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {formatCellValue("amount", row.amount)}
-              </td>
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                {row.paymentMethod}
-              </td>
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                {row.paymentType}
-              </td>
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm">
-                {formatCellValue("status", row.status)}
-              </td>
-              <td className="border border-slate-300 px-6 py-4">
-                <div className="flex items-center justify-center gap-2">
-                  {/* Update button */}
-                  {rowOptions.includes("UPDATE") && (user?.role === "ADMIN" || user?.role === "MANAGER") && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        openUpdateModal(row)
-                      }}
-                      className="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
-                    >
-                      Edit
-                    </button>
-                  )}
+    {/* Modal de confirmation de suppression */}
+    {isDeleteModalOpen && modalData && (
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeModals}
+        onConfirm={handleDeleteConfirm}
+        title="Supprimer le paiement"
+        message={`Êtes-vous sûr de vouloir supprimer le paiement #${modalData.paymentId} ? Cette action est irréversible.`}
+      />
+    )}
 
-                  {/* Delete button */}
-                  {rowOptions.includes("DELETE")&& (user?.role === "ADMIN" || user?.role === "MANAGER")  && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        openDeleteModal(row)
-                      }}
-                      className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    {/* Modal de mise à jour du paiement */}
+    {isUpdateModalOpen && modalData && (
+      <PaymentFormModal
+        mode={"update"}
+        isOpen={isUpdateModalOpen}
+        onClose={closeModals}
+        onSubmit={handleUpdateSubmit}
+        customerId={modalData.customerId}
+        data={modalData}
+      />
+    )}
+  </div>
+)
 
-      {/* Delete confirmation modal */}
-      {isDeleteModalOpen && modalData && (
-        <DeleteModal
-          isOpen={isDeleteModalOpen}
-          onClose={closeModals}
-          onConfirm={handleDeleteConfirm}
-          title="Delete Payment"
-          message={`Are you sure you want to delete payment #${modalData.paymentId}? This action cannot be undone.`}
-        />
-      )}
-
-      {/* Update payment modal */}
-      {isUpdateModalOpen && modalData && (
-        <PaymentFormModal
-          mode={"update"}
-          isOpen={isUpdateModalOpen}
-          onClose={closeModals}
-          onSubmit={handleUpdateSubmit}
-          customerId={modalData.customerId}
-          data={modalData}
-        />
-      )}
-    </div>
-  )
 }

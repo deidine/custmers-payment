@@ -152,136 +152,133 @@ export default function CustomerTable({ tableData, rowOptions = [], onRefresh }:
     return value
   }
 
-  return (
-    <div className="relative overflow-x-auto max-w-full">
-      <table className="min-w-full bg-white border-collapse border border-slate-400">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Member ID
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Name
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Contact
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Membership Type
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Start Date
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              End Date
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-              Status
-            </th>
-            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[180px]">
-              Options
-            </th>
+return (
+  <div className="relative overflow-x-auto max-w-full">
+    <table className="min-w-full bg-white border-collapse border border-slate-400">
+      <thead className="bg-gray-100">
+        <tr>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            ID Membre
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Nom
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Contact
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Type d’adhésion
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Date de début
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Date de fin
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Statut
+          </th>
+          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[180px]">
+            Options
+          </th>
+        </tr>
+      </thead>
+
+      <tbody className="bg-white divide-y divide-gray-200">
+        {tableData.map((row, index) => (
+          <tr
+            key={index}
+            onClick={() => setIsSelectedRow(index)}
+            className={isSelectedRow === index ? "bg-green-50" : ""}
+          >
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              {row.customerId}
+            </td>
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              {row.firstName} {row.lastName}
+            </td>
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <div>{row.phoneNumber || "-"}</div>
+              <div className="text-xs">{row.email || "-"}</div>
+            </td>
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm">
+              {formatCellValue("membershipType", row.membershipType)}
+            </td>
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {formatCellValue("membershipStartDate", row.membershipStartDate)}
+            </td>
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {formatCellValue("membershipEndDate", row.membershipEndDate)}
+            </td>
+            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm">
+              {formatCellValue("status", row.status)}
+            </td>
+            <td className="border border-slate-300 px-6 py-4">
+              <div className="flex items-center justify-center gap-2">
+                {rowOptions.includes("UPDATE") && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      openUpdateModal(row)
+                    }}
+                    className="text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
+                  >
+                    Modifier
+                  </button>
+                )}
+
+                {rowOptions.includes("VIEW") && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      window.location.href = `/dashboard/clentDetail/${row.customerId}`
+                    }}
+                    className="text-white bg-purple-600 hover:bg-purple-700 font-medium rounded-lg text-sm px-2 py-1 text-center hover:underline flex items-center"
+                  >
+                    <ClipboardList className="w-3.5 h-3.5 mr-1" /> Visites
+                  </button>
+                )}
+
+                {rowOptions.includes("DELETE") && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      openDeleteModal(row)
+                    }}
+                    className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
+                  >
+                    Supprimer
+                  </button>
+                )}
+              </div>
+            </td>
           </tr>
-        </thead>
+        ))}
+      </tbody>
+    </table>
 
-        <tbody className="bg-white divide-y divide-gray-200">
-          {tableData.map((row, index) => (
-            <tr
-              key={index}
-              onClick={() => setIsSelectedRow(index)}
-              className={isSelectedRow === index ? "bg-green-50" : ""}
-            >
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                {row.customerId}
-              </td>
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                {row.firstName} {row.lastName}
-              </td>
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <div>{row.phoneNumber || "-"}</div>
-                <div className="text-xs">{row.email || "-"}</div>
-              </td>
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm">
-                {formatCellValue("membershipType", row.membershipType)}
-              </td>
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {formatCellValue("membershipStartDate", row.membershipStartDate)}
-              </td>
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {formatCellValue("membershipEndDate", row.membershipEndDate)}
-              </td>
-              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm">
-                {formatCellValue("status", row.status)}
-              </td>
-              <td className="border border-slate-300 px-6 py-4">
-                <div className="flex items-center justify-center gap-2">
-                  {/* Update button */}
-                  {rowOptions.includes("UPDATE") && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        openUpdateModal(row)
-                      }}
-                      className="text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
-                    >
-                      Edit
-                    </button>
-                  )}
+    {/* Delete confirmation modal */}
+    {isDeleteModalOpen && modalData && (
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeModals}
+        onConfirm={handleDeleteConfirm}
+        title="Supprimer le membre"
+        message={`Êtes-vous sûr de vouloir supprimer ${modalData.firstName} ${modalData.lastName} ? Cela supprimera définitivement son compte et toutes les données associées.`}
+      />
+    )}
 
+    {/* Update customer modal */}
+    {isUpdateModalOpen && modalData && (
+      <CustomerFormModal
+        mode={"update"}
+        isOpen={isUpdateModalOpen}
+        onClose={closeModals}
+        onSubmit={handleUpdateSubmit}
+        data={modalData}
+      />
+    )}
+  </div>
+)
 
-                  {/* View attendance button */}
-                  {rowOptions.includes("VIEW") && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        window.location.href = `/dashboard/clentDetail/${row.customerId}`
-                      }}
-                      className="text-white bg-purple-600 hover:bg-purple-700 font-medium rounded-lg text-sm px-2 py-1 text-center hover:underline flex items-center"
-                    >
-                      <ClipboardList className="w-3.5 h-3.5 mr-1" /> Visits
-                    </button>
-                  )}
-
-                  {/* Delete button */}
-                  {rowOptions.includes("DELETE") && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        openDeleteModal(row)
-                      }}
-                      className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Delete confirmation modal */}
-      {isDeleteModalOpen && modalData && (
-        <DeleteModal
-          isOpen={isDeleteModalOpen}
-          onClose={closeModals}
-          onConfirm={handleDeleteConfirm}
-          title="Delete Member"
-          message={`Are you sure you want to delete ${modalData.firstName} ${modalData.lastName}? This will permanently remove their account and all associated records.`}
-        />
-      )}
-
-      {/* Update customer modal */}
-      {isUpdateModalOpen && modalData && (
-        <CustomerFormModal
-          mode={"update"}
-          isOpen={isUpdateModalOpen}
-          onClose={closeModals}
-          onSubmit={handleUpdateSubmit}
-          data={modalData}
-        />
-      )}
-    </div>
-  )
 }

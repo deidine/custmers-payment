@@ -185,176 +185,179 @@ export default function PaymentDashboard() {
     fetchTableData(1)
   }
 
-  return (
-    <>
-      {/* Filter Section */}
-      <div className="mb-4">
-        <button 
-          className="flex items-center gap-2 mb-2 px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200"
-          onClick={() => setIsFilterExpanded(!isFilterExpanded)}
-        >
-          <Filter className="w-4 h-4" />
-          {isFilterExpanded ? "Hide Filters" : "Show Filters"}
-        </button>
-        
-        {isFilterExpanded && (
-          <div className="p-4 bg-white border rounded-md shadow-sm">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              {/* Status Filter */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Payment Status</label>
-                <select 
-                  className="w-full p-2 border rounded-md"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                >
-                  <option value="">All Statuses</option>
-                  <option value="COMPLETED">Completed</option>
-                  <option value="PENDING">Pending</option>
-                  <option value="FAILED">Failed</option>
-                </select>
-              </div>
-              
-              {/* Date From */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date From</label>
-                <input 
-                  type="date" 
-                  className="w-full p-2 border rounded-md"
-                  value={dateFrom}
-                  onChange={(e) => setDateFrom(e.target.value)}
-                />
-              </div>
-              
-              {/* Date To */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date To</label>
-                <input 
-                  type="date" 
-                  className="w-full p-2 border rounded-md"
-                  value={dateTo}
-                  onChange={(e) => setDateTo(e.target.value)}
-                />
-              </div>
-              
-              {/* Amount Min */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Min Amount ($)</label>
-                <input 
-                  type="number" 
-                  className="w-full p-2 border rounded-md"
-                  placeholder="0.00"
-                  value={amountMin}
-                  onChange={(e) => setAmountMin(e.target.value)}
-                />
-              </div>
-              
-              {/* Amount Max */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Max Amount ($)</label>
-                <input 
-                  type="number" 
-                  className="w-full p-2 border rounded-md"
-                  placeholder="1000.00"
-                  value={amountMax}
-                  onChange={(e) => setAmountMax(e.target.value)}
-                />
-              </div>
-              
-              {/* Customer ID */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Customer ID</label>
-                <input 
-                  type="number" 
-                  className="w-full p-2 border rounded-md"
-                  placeholder="Enter customer ID"
-                  value={customerId}
-                  onChange={(e) => setCustomerId(e.target.value)}
-                />
-              </div>
-              
-              {/* Unpaid in Month */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Unpaid in Month</label>
-                <input 
-                  type="month" 
-                  className="w-full p-2 border rounded-md"
-                  value={unpaidInMonth}
-                  onChange={(e) => setUnpaidInMonth(e.target.value)}
-                />
-              </div>
+return (
+  <>
+    {/* Section de filtre */}
+    <div className="mb-4">
+      <button 
+        className="flex items-center gap-2 mb-2 px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200"
+        onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+      >
+        <Filter className="w-4 h-4" />
+        {isFilterExpanded ? "Masquer les filtres" : "Afficher les filtres"}
+      </button>
+      
+      {isFilterExpanded && (
+        <div className="p-4 bg-white border rounded-md shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            {/* Filtre par statut */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Statut du paiement</label>
+              <select 
+                className="w-full p-2 border rounded-md"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+              >
+                <option value="">Tous les statuts</option>
+                <option value="COMPLETED">Complété</option>
+                <option value="PENDING">En attente</option>
+                <option value="FAILED">Échoué</option>
+              </select>
             </div>
             
-            {/* Filter Actions */}
-            <div className="flex flex-wrap gap-2 mt-4">
-              <button 
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                onClick={handleApplyFilters}
-              >
-                Apply Filters
-              </button>
-              <button 
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 flex items-center gap-1"
-                onClick={handleClearFilters}
-              >
-                <X className="w-4 h-4" /> Clear Filters
-              </button>
-              <button 
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-                onClick={() => {
-                  setStatus("PENDING")
-                  handleApplyFilters()
-                }}
-              >
-                Pending Payments
-              </button>
-              <button 
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-                onClick={handleFilterUnpaidThisMonth}
-              >
-                Unpaid This Month
-              </button>
+            {/* Date de début */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Date de début</label>
+              <input 
+                type="date" 
+                className="w-full p-2 border rounded-md"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+              />
+            </div>
+            
+            {/* Date de fin */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Date de fin</label>
+              <input 
+                type="date" 
+                className="w-full p-2 border rounded-md"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+              />
+            </div>
+            
+            {/* Montant min */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Montant min ($)</label>
+              <input 
+                type="number" 
+                className="w-full p-2 border rounded-md"
+                placeholder="0.00"
+                value={amountMin}
+                onChange={(e) => setAmountMin(e.target.value)}
+              />
+            </div>
+            
+            {/* Montant max */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Montant max ($)</label>
+              <input 
+                type="number" 
+                className="w-full p-2 border rounded-md"
+                placeholder="1000.00"
+                value={amountMax}
+                onChange={(e) => setAmountMax(e.target.value)}
+              />
+            </div>
+            
+            {/* ID du client */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">ID du client</label>
+              <input 
+                type="number" 
+                className="w-full p-2 border rounded-md"
+                placeholder="Entrer l'ID du client"
+                value={customerId}
+                onChange={(e) => setCustomerId(e.target.value)}
+              />
+            </div>
+            
+            {/* Non payé ce mois-ci */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Non payé ce mois</label>
+              <input 
+                type="month" 
+                className="w-full p-2 border rounded-md"
+                value={unpaidInMonth}
+                onChange={(e) => setUnpaidInMonth(e.target.value)}
+              />
             </div>
           </div>
-        )}
-      </div>
-
-      {/* Dashboard Options */}
-      <div className="flex justify-start items-start gap-2 mb-2">
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded flex items-center justify-center w-12 h-10"
-          onClick={handleRefresh}
-        >
-          <RefreshIcon className="w-5 h-5" fill="none" stroke="white" />
-        </button>
-
-        {rowOptions.includes("CREATE")  && (
           
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded flex items-center justify-center w-32 h-10 text-nowrap"
-            onClick={() => setIsCreateModalOpen(true)}
-          >
-            Add payment
-          </button>
-        )}
-      </div> 
-      {/* Table */}
-      {isLoadingData ? (
-        <LoadingTable />
-      ) : (
-        <PaymentTable tableData={tableData} rowOptions={rowOptions} onRefresh={handleRefresh} />
+          {/* Actions de filtre */}
+          <div className="flex flex-wrap gap-2 mt-4">
+            <button 
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              onClick={handleApplyFilters}
+            >
+              Appliquer les filtres
+            </button>
+            <button 
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 flex items-center gap-1"
+              onClick={handleClearFilters}
+            >
+              <X className="w-4 h-4" /> Réinitialiser les filtres
+            </button>
+            <button 
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+              onClick={() => {
+                setStatus("PENDING")
+                handleApplyFilters()
+              }}
+            >
+              Paiements en attente
+            </button>
+            <button 
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+              onClick={handleFilterUnpaidThisMonth}
+            >
+              Non payés ce mois
+            </button>
+          </div>
+        </div>
       )}
-      {/* Modal Add new payment */}
-      {isCreateModalOpen && (
-        <PaymentFormModal
-          mode={"create"}
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-          onSubmit={handleCreateSubmit}
-        />
+    </div>
+
+    {/* Options du tableau de bord */}
+    <div className="flex justify-start items-start gap-2 mb-2">
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded flex items-center justify-center w-12 h-10"
+        onClick={handleRefresh}
+      >
+        <RefreshIcon className="w-5 h-5" fill="none" stroke="white" />
+      </button>
+
+      {rowOptions.includes("CREATE") && (
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded flex items-center justify-center w-32 h-10 text-nowrap"
+          onClick={() => setIsCreateModalOpen(true)}
+        >
+          Ajouter un paiement
+        </button>
       )}
-      {/* Pagination */}
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-    </>
-  )
+    </div>
+
+    {/* Tableau */}
+    {isLoadingData ? (
+      <LoadingTable />
+    ) : (
+      <PaymentTable tableData={tableData} rowOptions={rowOptions} onRefresh={handleRefresh} />
+    )}
+
+    {/* Modal pour ajouter un paiement */}
+    {isCreateModalOpen && (
+      <PaymentFormModal
+        mode={"create"}
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreateSubmit}
+      />
+    )}
+
+    {/* Pagination */}
+    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+  </>
+)
+
 }
