@@ -4,6 +4,7 @@ import camelcaseKeys from "camelcase-keys";
 import { createCustomer, getAllCustomers, getCustomerByPhoneNumber } from "@/db/queries";
 import { Customer, CustomerCreateDTO } from "@/types/customer";
 import { formatError } from "@/utils/error-handlers";
+import { getFilteredCustomers } from "@/db/payment";
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,11 +38,20 @@ export async function POST(request: NextRequest) {
   }
 }
 
+ 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const page = searchParams.get("page") || "1";
     const limit = searchParams.get("limit") || "10";
+    
+    // Filter parameters
+    const membershipType = searchParams.get("membershipType");
+    const status = searchParams.get("status");
+    const unpaidThisMonth = searchParams.get("unpaidThisMonth") === "true";
+    const dateFrom = searchParams.get("dateFrom");
+    const dateTo = searchParams.get("dateTo");
+    
     if (
       isNaN(Number(page)) ||
       Number(page) < 0 ||
@@ -54,10 +64,38 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { data, totalItems } = await getAllCustomers(
-      Number(page),
-      Number(limit)
-    );
+    // Check if any filters are applied
+    const hasFilters = membershipType || status || unpaidThisMonth || dateFrom || dateTo;
+
+    let data: any[], totalItems: number;
+
+    if (hasFilters) {
+      // Use filtered query
+      const filterParams = {
+        membershipType: membershipType || undefined,
+        status: status || undefined,
+        unpaidThisMonth,
+        dateFrom: dateFrom || undefined,
+        dateTo: dateTo || undefined,
+      };
+      
+      const result = await getFilteredCustomers(
+        Number(page),
+        Number(limit),
+        filterParams
+      );
+      data = result.data;
+      totalItems = result.totalItems;
+    } else {
+      // Use regular query
+      const result = await getAllCustomers(
+        Number(page),
+        Number(limit)
+      );
+      data = result.data;
+      totalItems = result.totalItems;
+    }
+
     const result: Customer[] =
       (camelcaseKeys(data, { deep: true }) as Customer[]) || [];
     return NextResponse.json({ result, totalItems });

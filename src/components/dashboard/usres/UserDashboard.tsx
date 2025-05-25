@@ -117,10 +117,10 @@ console.log(totalItems,result,"deidine")
 
         {rowOptions.includes("CREATE") && (
           <button
-            className="bg-blue-500 text-white px-4 py-2 rounded flex items-center justify-center w-24 h-10 text-nowrap"
+            className="bg-blue-500 text-white px-4 py-2 rounded flex items-center justify-center h-10 text-nowrap"
             // onClick={() => setIsCreateModalOpen(true)}
           >
-         <Link href="/register">   Add new </Link>
+         <Link href="/register">   Ajouter un administrateur   </Link>
           </button>
         )}
       </div>

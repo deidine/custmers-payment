@@ -3,8 +3,9 @@ import dynamic from "next/dynamic"
 import type React from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import toast from "react-hot-toast"
+import { format, parse } from "date-fns";
 
 import type { PaymentWithCustomer } from "@/types/payment"
 import { dashboardSideItems } from "@/lib/dashboard-items"
@@ -15,7 +16,8 @@ import LoadingTable from "../LoadingTable"
 import Pagination from "@/components/ui/Pagination"
 import { useScrollLock } from "@/hooks/useScrollLock"
 import PaymentTable from "./PaymentTable"
-  
+  import { fr } from "date-fns/locale";
+
 const PaymentFormModal = dynamic(() => import("./PaymentFormModal"), {
   loading: () => <div>Loading modal...</div>,
   ssr: false,
@@ -39,7 +41,11 @@ export default function PaymentDashboard() {
   const [unpaidInMonth, setUnpaidInMonth] = useState(searchParams.get("unpaidInMonth") || "")
 
   useScrollLock(isCreateModalOpen)
-
+const formattedMonth = useMemo(() => {
+  if (!unpaidInMonth) return "";
+  const date = parse(unpaidInMonth, "yyyy-MM", new Date());
+  return format(date, "MMMM yyyy", { locale: fr });
+}, [unpaidInMonth]);
   const rowOptions = dashboardSideItems.find((item) => item.id === "payments")?.options || []
 
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"))
@@ -236,7 +242,7 @@ return (
                 onChange={(e) => setDateTo(e.target.value)}
               />
             </div>
-            
+ 
             {/* Montant min */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Montant min ($)</label>
@@ -274,8 +280,8 @@ return (
             </div>
             
             {/* Non payé ce mois-ci */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Non payé ce mois</label>
+            <div lang="fr">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Non payé ce mois  {formattedMonth}</label>
               <input 
                 type="month" 
                 className="w-full p-2 border rounded-md"
@@ -330,7 +336,7 @@ return (
 
       {rowOptions.includes("CREATE") && (
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded flex items-center justify-center w-32 h-10 text-nowrap"
+          className="bg-blue-500 text-white px-4 py-2 rounded flex items-center justify-center h-10 text-nowrap"
           onClick={() => setIsCreateModalOpen(true)}
         >
           Ajouter un paiement

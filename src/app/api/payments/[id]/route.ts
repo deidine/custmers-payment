@@ -2,11 +2,34 @@ import { NextRequest, NextResponse } from "next/server";
 import camelcaseKeys from "camelcase-keys";
 
  import { formatError } from "@/utils/error-handlers";
-import { deletePayment,  updatePayment } from "@/db/queries";
+import { deletePayment,  getPaymentById,  updatePayment } from "@/db/queries";
 import { PaymentUpdateDTO } from "@/types/payment";
 
  
-
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    if (Number(params.id) <= 0 || isNaN(Number(params.id))) {
+      return NextResponse.json(
+        { error: "Invalid customer ID" },
+        { status: 400 }
+      );
+    }
+    const response = await getPaymentById(Number(params.id));
+    console.log(response);
+    return NextResponse.json(
+      { ...(camelcaseKeys(response, { deep: true }) as any) },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Error fetching customer", details: formatError(error) },
+      { status: 500 }
+    );
+  }
+}
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }

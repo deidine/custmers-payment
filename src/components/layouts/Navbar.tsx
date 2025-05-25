@@ -54,8 +54,8 @@ export default function Navbar() {
             id="language"
             className="bg-gray-700 text-white px-2 py-1 rounded"
           >
-            <option value="Vietnamese" defaultChecked>
-              Vietnamese
+            <option value="french" defaultChecked>
+              Français
             </option>
             <option value="English">English</option>
           </select>

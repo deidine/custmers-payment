@@ -139,18 +139,6 @@ return (
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-green-300"
           />
         </div>
-
-        {/* Contact d'urgence */}
-        <div className="mb-2">
-          <label className="block text-gray-700 text-sm font-bold mb-1">Contact d'urgence</label>
-          <input
-            type="text"
-            value={formData?.emergencyContact || ""}
-            onChange={(e) => handleInputChange("emergencyContact", e.target.value)}
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-green-300"
-          />
-        </div>
-
         {/* Téléphone d'urgence */}
         <div className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">Téléphone d'urgence</label>
@@ -161,6 +149,19 @@ return (
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-green-300"
           />
         </div>
+
+        {/* Contact d'urgence */}
+        <div className="mb-2">
+          {/* <label className="block text-gray-700 text-sm font-bold mb-1">Contact d'urgence</label> */}
+          <input
+            type="text"
+            hidden
+            value={formData?.emergencyContact || "notimportent"}
+            onChange={(e) => handleInputChange("emergencyContact", e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-green-300"
+          />
+        </div>
+
 
         {/* Section Adresse */}
         <div className="col-span-2 mt-4">
@@ -183,7 +184,7 @@ return (
           <label className="block text-gray-700 text-sm font-bold mb-1">Ville</label>
           <input
             type="text"
-            value={formData?.city || ""}
+            value={formData?.city || "nouakchott"}
             onChange={(e) => handleInputChange("city", e.target.value)}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-green-300"
           />
@@ -194,7 +195,7 @@ return (
           <label className="block text-gray-700 text-sm font-bold mb-1">État</label>
           <input
             type="text"
-            value={formData?.state || ""}
+            value={formData?.state || "mauritanie"}
             onChange={(e) => handleInputChange("state", e.target.value)}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-green-300"
           />
@@ -205,7 +206,7 @@ return (
           <label className="block text-gray-700 text-sm font-bold mb-1">Code de l'état</label>
           <input
             type="text"
-            value={formData?.stateCode || ""}
+            value={formData?.stateCode || "222"}
             onChange={(e) => handleInputChange("stateCode", e.target.value)}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-green-300"
           />

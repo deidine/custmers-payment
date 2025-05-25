@@ -36,7 +36,9 @@ export async function POST(request: NextRequest) {
     };
     const token = await encrypt(payload);
     const sessionUuid = generateUUID();
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
+    const expiresAt = new Date(Date.now() + 1000 * 60); // 1 day
+
+    // const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
     // Save session token in database
     await createSession({
       uuid: sessionUuid,

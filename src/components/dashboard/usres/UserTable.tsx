@@ -153,7 +153,7 @@ export default function UserTable({ tableData, rowOptions = [], onRefresh }: Use
                       onClick={() => openUpdateModal(row)}
                       className="w-full text-nowrap text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-2 py-1 text-center hover:underline"
                     >
-                    Edit
+                    Modifier
                     </button>
                   )}
 
@@ -163,7 +163,7 @@ export default function UserTable({ tableData, rowOptions = [], onRefresh }: Use
                       onClick={() => openDeleteModal(row)}
                       className="w-full text-nowrap text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-2 py-1 text-center hover:underline"
                     >
-                      delete
+                      Supprimer
                     </button>
                   )}
                 </div>
