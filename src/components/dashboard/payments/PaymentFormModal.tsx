@@ -4,7 +4,7 @@ import type React from "react"
 import toast from "react-hot-toast"
 
 import type { Payment, PaymentCreateDTO, PaymentUpdateDTO } from "@/types/payment"
-import { PaymentMethod, PaymentType, PaymentStatus } from "@/types/payment"
+import { PaymentMethod, PaymentStatus } from "@/types/payment"
 import type { Customer } from "@/types/customer"
 
 interface PaymentFormModalProps {
@@ -22,16 +22,13 @@ export default function PaymentFormModal({ mode, isOpen, onClose, onSubmit, data
     amount: "",
     paymentDate: new Date().toISOString().split("T")[0],
     paymentMethod: PaymentMethod.CASH,
-    paymentType: PaymentType.MEMBERSHIP,
     status: PaymentStatus.COMPLETED,
     notes: "",
     invoiceNumber: "",
     receiptNumber: "",
     transactionReference: "",
-    discount: 0,
-    tax: 0,
-    subtotal: 0,
-    total: 0,
+   
+    totalAmount: 0 
   })
 
   const [customers, setCustomers] = useState<Customer[]>([])
@@ -40,8 +37,7 @@ export default function PaymentFormModal({ mode, isOpen, onClose, onSubmit, data
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
 
   // Tax rate configuration (you can make this configurable)
-  const TAX_RATE = 0.08 // 8% tax rate
-  const STORE_PREFIX = "GS" // Grocery Store prefix
+   const STORE_PREFIX = "GS" // Grocery Store prefix
   
   // Generate unique invoice number
   const generateInvoiceNumber = () => {
@@ -71,37 +67,18 @@ export default function PaymentFormModal({ mode, isOpen, onClose, onSubmit, data
     const random = Math.random().toString(36).substring(2, 8).toUpperCase()
     return `TXN-${timestamp.slice(-8)}-${random}`
   }
-
-  // Calculate totals based on subtotal, discount, and tax
-  const calculateTotals = (subtotal: number, discount: number = 0) => {
-    const discountAmount = (subtotal * discount) / 100
-    const afterDiscount = subtotal - discountAmount
-    const taxAmount = afterDiscount * TAX_RATE
-    const total = afterDiscount + taxAmount
-    
-    return {
-      subtotal: subtotal,
-      discountAmount: discountAmount,
-      afterDiscount: afterDiscount,
-      taxAmount: taxAmount,
-      total: total
-    }
-  }
-
-  // Update totals when amount or discount changes
-  useEffect(() => {
+ 
+   useEffect(() => {
     if (formData.amount && !isNaN(parseFloat(formData.amount))) {
       const subtotal = parseFloat(formData.amount)
-      const calculations = calculateTotals(subtotal, formData.discount)
+      const calculations =  subtotal 
       
       setFormData(prev => ({
-        ...prev,
-        subtotal: calculations.subtotal,
-        tax: calculations.taxAmount,
-        total: calculations.total
+        ...prev, 
+        totalAmount: calculations 
       }))
     }
-  }, [formData.amount, formData.discount])
+  }, [formData.amount ])
 
   // Auto-generate numbers when payment method changes
   useEffect(() => {
@@ -212,10 +189,9 @@ export default function PaymentFormModal({ mode, isOpen, onClose, onSubmit, data
     // Prepare submission data
     const submissionData = {
       ...formData,
-      amount: parseFloat(formData.total || formData.amount), // Use calculated total
-      subtotal: parseFloat(formData.subtotal || formData.amount),
-      tax: parseFloat(formData.tax || "0"),
-      discount: parseFloat(formData.discount || "0"),
+      amount: parseFloat(formData.totalAmount || formData.amount), // Use calculated total
+      totalAmount: parseFloat(formData.totalAmount || formData.amount),
+     
       customerId: parseInt(formData.customerId),
       ...(mode === "create" && { createdBy: 1 }), // Replace with actual logged in user ID
     }
@@ -312,7 +288,7 @@ export default function PaymentFormModal({ mode, isOpen, onClose, onSubmit, data
                   />
                 </div>
 
-                <div>
+                <div style={{display:"none"}}>
                   <label className="block text-gray-700 text-sm font-bold mb-1">Remise (%)</label>
                   <input
                     type="number"
@@ -346,30 +322,15 @@ export default function PaymentFormModal({ mode, isOpen, onClose, onSubmit, data
                       className="w-full px-3 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:border-green-500 appearance-none"
                       required
                     >
-                      <option value={PaymentMethod.CASH}>Espèces</option>
-                      <option value={PaymentMethod.CREDIT_CARD}>Carte de crédit</option>
-                      <option value={PaymentMethod.DEBIT_CARD}>Carte de débit</option>
-                      <option value={PaymentMethod.BANK_TRANSFER}>Virement bancaire</option>
+                      <option value={PaymentMethod.CASH}>CACHE</option>
+                      <option value={PaymentMethod.CREDIT_CARD}>BANKILY</option>
+                      <option value={PaymentMethod.DEBIT_CARD}>SADAD</option>
+                      <option value={PaymentMethod.BANK_TRANSFER}>MASRIVY</option>
                       <option value={PaymentMethod.ONLINE}>Paiement en ligne</option>
                     </select>
                   </div>
                 </div>
-
-                <div>
-                  <label className="block text-gray-700 text-sm font-bold mb-1">Type de paiement</label>
-                  <select
-                    value={formData?.paymentType || PaymentType.MEMBERSHIP}
-                    onChange={(e) => handleInputChange("paymentType", e.target.value)}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:border-green-500"
-                    required
-                  >
-                    <option value={PaymentType.MEMBERSHIP}>Achat de produits d’épicerie</option>
-                    <option value={PaymentType.PERSONAL_TRAINING}>Produits frais</option>
-                    <option value={PaymentType.SUPPLEMENTS}>Produits en conserve</option>
-                    <option value={PaymentType.OTHER}>Autres articles</option>
-                  </select>
-                </div>
-
+ 
                 <div>
                   <label className="block text-gray-700 text-sm font-bold mb-1">Statut du paiement</label>
                   <select
@@ -388,7 +349,7 @@ export default function PaymentFormModal({ mode, isOpen, onClose, onSubmit, data
             </div>
 
             {/* Transaction References */}
-            <div className="bg-orange-50 p-4 rounded-lg">
+            <div className="bg-orange-50 p-4  rounded-lg" style={{display:"none"}} >
               <div className="flex justify-between items-center mb-3">
                 <h3 className="text-lg font-semibold text-orange-900">Références de la transaction</h3>
                 {mode === "create" && (
@@ -460,26 +421,15 @@ placeholder="Toute information supplémentaire sur cette transaction..."
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Sous-total :</span>
-                  <span className="font-medium">${(formData.subtotal || 0).toFixed(2)}</span>
+                  {/* <span className="font-medium">${(formData.totalAmount || 0).toFixed(2)}</span> */}
                 </div>
                 
-                {formData.discount > 0 && (
-                  <div className="flex justify-between text-green-600">
-                    <span>Remise ({formData.discount}%):</span>
-                    <span>-${((formData.subtotal || 0) * (formData.discount || 0) / 100).toFixed(2)}</span>
-                  </div>
-                )}
-                
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Taxes ({(TAX_RATE * 100).toFixed(1)}%):</span>
-                  <span className="font-medium">${(formData.tax || 0).toFixed(2)}</span>
-                </div>
-                
+            
                 <hr className="my-2" />
                 
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total:</span>
-                  <span className="text-green-600">${(formData.total || 0).toFixed(2)}</span>
+                  <span className="text-green-600">${(formData.totalAmount || 0).toFixed(2)}</span>
                 </div>
               </div>
 
@@ -510,7 +460,7 @@ placeholder="Toute information supplémentaire sur cette transaction..."
 
             {/* Auto-generate toggle */}
             {mode === "create" && (
-              <div className="p-3 bg-yellow-50 rounded-lg">
+              <div style={{display:"none"}} className="p-3 bg-yellow-50 rounded-lg">
                 <label className="flex items-center space-x-2 text-sm">
                   <input
                     type="checkbox"

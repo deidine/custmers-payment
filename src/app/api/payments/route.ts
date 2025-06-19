@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import camelcaseKeys from "camelcase-keys";
 import { PaymentCreateDTO } from "@/types/payment";
-import { createPayment, getAllPayments, getPaymentById } from "@/db/queries";
+import { createOrUpdatePayment, getAllPayments, getPaymentById } from "@/db/queries";
 
 export async function POST(request: NextRequest) {
   try {
     const data = (await request.json()) as PaymentCreateDTO;
     console.log("Payment created", data);
-    const response = await createPayment(data);
+    const response = await createOrUpdatePayment(data);
     if (response) {
       return NextResponse.json(
         { message: "Payment created successfully" },
@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
+    console.error("Error creating payment:", error);
     return NextResponse.json(
       { error: "Error creating payment", details: error },
       { status: 500 }

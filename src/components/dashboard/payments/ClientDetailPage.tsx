@@ -33,8 +33,7 @@ interface Payment {
   amount: number
   paymentDate: string
   paymentMethod: string
-  paymentType: string
-  status: string
+   status: string
   invoiceNumber?: string
   receiptNumber?: string
   notes?: string
@@ -378,7 +377,7 @@ setClient(data)
                         <div className="mt-2 sm:flex sm:justify-between">
                           <div className="sm:flex">
                             <p className="flex items-center text-sm text-gray-500">
-                              {payment.paymentType} • {payment.paymentMethod}
+                            • {payment.paymentMethod}
                             </p>
                           </div>
                           <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">

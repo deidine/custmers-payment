@@ -107,7 +107,7 @@ export default function UserTable({ tableData, rowOptions = [], onRefresh }: Use
     return <p className="text-center text-lg mt-10">No users available</p>
   }
 
-  const columns = Object.keys(tableData[0]).slice(1) // Exclude ID/UUID (NOTE: must be in the first column)
+  const columns = Object.keys(tableData[0]).slice() // Exclude ID/UUID (NOTE: must be in the first column)
 
   return (
     <div className="relative overflow-x-auto max-w-full">

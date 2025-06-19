@@ -195,9 +195,7 @@ return (
             <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
               {row.paymentMethod}
             </td>
-            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-              {row.paymentType}
-            </td>
+          
             <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm">
               {formatCellValue("status", row.status)}
             </td>

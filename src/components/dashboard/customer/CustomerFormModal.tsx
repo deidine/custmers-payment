@@ -151,7 +151,7 @@ return (
         </div>
 
         {/* Contact d'urgence */}
-        <div className="mb-2">
+        <div  style={{display:"none"}}  className="mb-2">
           {/* <label className="block text-gray-700 text-sm font-bold mb-1">Contact d'urgence</label> */}
           <input
             type="text"
@@ -164,12 +164,12 @@ return (
 
 
         {/* Section Adresse */}
-        <div className="col-span-2 mt-4">
+        <div  style={{display:"none"}}  className="col-span-2 mt-4">
           <h3 className="text-lg font-semibold border-b pb-2 mb-3">Adresse</h3>
         </div>
 
         {/* Adresse */}
-        <div className="col-span-2 mb-2">
+        <div  style={{display:"none"}}  className="col-span-2 mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">Adresse</label>
           <textarea
             value={formData?.streetAddress || ""}
@@ -180,7 +180,7 @@ return (
         </div>
 
         {/* Ville */}
-        <div className="mb-2">
+        <div  style={{display:"none"}}  className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">Ville</label>
           <input
             type="text"
@@ -191,7 +191,7 @@ return (
         </div>
 
         {/* État */}
-        <div className="mb-2">
+        <div  style={{display:"none"}}  className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">État</label>
           <input
             type="text"
@@ -202,7 +202,7 @@ return (
         </div>
 
         {/* Code de l'état */}
-        <div className="mb-2">
+        <div  style={{display:"none"}}  className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">Code de l'état</label>
           <input
             type="text"
@@ -213,12 +213,12 @@ return (
         </div>
 
         {/* Section Adhésion */}
-        <div className="col-span-2 mt-4">
+        <div style={{display:"none"}}  className="col-span-2 mt-4">
           <h3 className="text-lg font-semibold border-b pb-2 mb-3">Informations sur l'adhésion</h3>
         </div>
 
         {/* Type d'adhésion */}
-        <div className="mb-2">
+        <div style={{display:"none"}} className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">Type d'adhésion</label>
           <select
             value={formData?.membershipType || "BASIC"}
@@ -234,7 +234,7 @@ return (
         </div>
 
         {/* Statut d'adhésion */}
-        <div className="mb-2">
+        <div  style={{display:"none"}}  className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">Statut d'adhésion</label>
           <select
             value={formData?.status || "ACTIVE"}
@@ -249,12 +249,12 @@ return (
         </div>
 
         {/* Date de début */}
-        <div className="mb-2">
+        <div  style={{display:"none"}}  className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">Date de début d'adhésion</label>
           <input
             type="date"
             value={
-              formData?.membershipStartDate ? new Date(formData.membershipStartDate).toISOString().split("T")[0] : ""
+              formData?.membershipStartDate ? new Date(formData.membershipStartDate).toISOString().split("T")[0] : new Date().toISOString().split("T")[0]
             }
             onChange={(e) => handleInputChange("membershipStartDate", e.target.value)}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-green-300"
@@ -262,12 +262,12 @@ return (
         </div>
 
         {/* Date de fin */}
-        <div className="mb-2">
+        <div  style={{display:"none"}}  className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">Date de fin d'adhésion</label>
           <input
             type="date"
             value={
-              formData?.membershipEndDate ? new Date(formData.membershipEndDate).toISOString().split("T")[0] : ""
+              formData?.membershipEndDate ? new Date(formData.membershipEndDate).toISOString().split("T")[0] :  new Date().toISOString().split("T")[0]
             }
             onChange={(e) => handleInputChange("membershipEndDate", e.target.value)}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-green-300"

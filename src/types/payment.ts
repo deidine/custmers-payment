@@ -1,17 +1,12 @@
 export enum PaymentMethod {
   CASH = "CASH",
-  CREDIT_CARD = "CREDIT_CARD",
-  DEBIT_CARD = "DEBIT_CARD",
-  BANK_TRANSFER = "BANK_TRANSFER",
+  CREDIT_CARD = "BANKILY",
+  DEBIT_CARD = "SADAD",
+  BANK_TRANSFER = "MASRIVY",
   ONLINE = "ONLINE",
 }
 
-export enum PaymentType {
-  MEMBERSHIP = "MEMBERSHIP",
-  PERSONAL_TRAINING = "PERSONAL_TRAINING",
-  SUPPLEMENTS = "SUPPLEMENTS",
-  OTHER = "OTHER",
-}
+ 
 
 export enum PaymentStatus {
   COMPLETED = "COMPLETED",
@@ -22,11 +17,11 @@ export enum PaymentStatus {
 
 export type Payment = {
   paymentId: number
+  payment_date: Date
   customerId: number
   amount: number
   paymentDate: Date
   paymentMethod: PaymentMethod
-  paymentType: PaymentType
   invoiceNumber?: string
   receiptNumber?: string
   transactionReference?: string
@@ -34,6 +29,7 @@ export type Payment = {
   notes?: string
   createdBy?: number
   createdAt: Date
+  customer_id: number
   updatedAt: Date
 }
 

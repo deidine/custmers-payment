@@ -47,7 +47,6 @@ export default function UserDashboard() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/auth/users?page=${page}&limit=${itemsPerPage}`)
       if (response.ok) {
         const { result, totalItems } = await response.json()
-console.log(totalItems,result,"deidine")
         setTotalPages(Math.ceil(totalItems / itemsPerPage))
         setTableData(result as User[])
       }

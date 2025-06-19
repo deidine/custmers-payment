@@ -92,15 +92,10 @@ export async function getAllUsers(page = 1, limit = 10) {
   const offset = (page - 1) * limit
   const queryData = `
     SELECT 
-      u.user_id, 
-      u.uuid, 
-      u.username, 
-      u.password, 
+      u.user_id,  
+      u.username,  
       u.role, 
-      u.is_enabled, 
-    
-      u.created_at, 
-      u.updated_at 
+      u.is_enabled
     FROM "public"."users" u 
     ORDER BY u.updated_at DESC 
     LIMIT $1 OFFSET $2
@@ -628,6 +623,50 @@ console.log(placeholders.join(", "),columns.join(", "))
   } catch (err: any) {
     console.error("Database error:", err)
     throw err
+  }
+}
+export async function createOrUpdatePayment(data: PaymentCreateDTO) {
+  const paymentDate = data.payment_date ? new Date(data.payment_date) : new Date()
+  const monthStart = new Date(paymentDate.getFullYear(), paymentDate.getMonth(), 1)
+  const monthEnd = new Date(paymentDate.getFullYear(), paymentDate.getMonth() + 1, 0)
+  // Check if a payment exists for the same customer and same month
+  const checkQuery = `
+    SELECT * FROM payments 
+    WHERE customer_id = $1 
+    AND payment_date >= $2 AND payment_date <= $3
+    LIMIT 1
+  `
+  const checkResult = await pool.query(checkQuery, [data.customerId, monthStart, monthEnd])
+console.log("monthStart,"+ data.customer_id +"monthEnd,"+JSON.stringify(monthEnd))
+
+  if (checkResult.rows.length > 0) {
+    // Update existing payment
+    const existingId = checkResult.rows[0].payment_id
+    const updateFields: string[] = []
+    const values: any[] = []
+    let index = 1
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined) {
+        const snakeKey = key.replace(/[A-Z]/g, (l) => `_${l.toLowerCase()}`)
+        updateFields.push(`${snakeKey} = $${index}`)
+        values.push(value)
+        index++
+      }
+    })
+
+    values.push(existingId) // for WHERE clause
+    const updateQuery = `
+      UPDATE payments 
+      SET ${updateFields.join(", ")}, updated_at = CURRENT_TIMESTAMP 
+      WHERE payment_id = $${index}
+      RETURNING *
+    `
+    const updateResult = await pool.query(updateQuery, values)
+    return updateResult.rows[0]
+  } else {
+    // Insert new payment
+    return await createPayment(data)
   }
 }
 

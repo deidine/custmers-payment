@@ -166,15 +166,7 @@ return (
           <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
             Contact
           </th>
-          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-            Type d’adhésion
-          </th>
-          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-            Date de début
-          </th>
-          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-            Date de fin
-          </th>
+          
           <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
             Statut
           </th>
@@ -201,15 +193,7 @@ return (
               <div>{row.phoneNumber || "-"}</div>
               <div className="text-xs">{row.email || "-"}</div>
             </td>
-            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm">
-              {formatCellValue("membershipType", row.membershipType)}
-            </td>
-            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {formatCellValue("membershipStartDate", row.membershipStartDate)}
-            </td>
-            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {formatCellValue("membershipEndDate", row.membershipEndDate)}
-            </td>
+          
             <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm">
               {formatCellValue("status", row.status)}
             </td>
