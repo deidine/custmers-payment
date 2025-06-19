@@ -150,28 +150,28 @@ export default function RegisterForm() {
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                   <Phone className="w-4 h-4" />
-                  Adresse
+                   Le numéro de téléphone  
                 </label>
                 <input
                   type="text"
-                  pattern="^\d{10}$"
+                  // pattern="^\d{10}$"
                   required
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  className={`w-full px-4 py-4 rounded-xl border-2 transition-all duration-300 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 outline-none ${getFieldValidationStyle(isPhoneNumberValid(), phoneNumber)}`}
+                  className={`w-full px-4 py-4 rounded-xl border-2 transition-all duration-300 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 outline-none`}
                   placeholder="Enter 10-digit phone number"
                 />
-                {phoneNumber && !isPhoneNumberValid() && (
+                {/* {phoneNumber && !isPhoneNumberValid() && (
                   <p className="text-red-500 text-sm mt-1 animate-in slide-in-from-top duration-200">
                    Numéro de téléphone
                   </p>
-                )}
+                )} */}
               </div>
 
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                   <Shield className="w-4 h-4" />
-                  Le numéro de téléphone doit comporter exactement 10 chiffres
+                 Role
                 </label>
                 <select
                   value={role}

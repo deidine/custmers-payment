@@ -427,10 +427,10 @@ placeholder="Toute information supplémentaire sur cette transaction..."
             
                 <hr className="my-2" />
                 
-                <div className="flex justify-between text-lg font-bold">
-                  <span>Total:</span>
+                {/* <div className="flex justify-between text-lg font-bold">
+                  <span>Total: </span>
                   <span className="text-green-600">${(formData.totalAmount || 0).toFixed(2)}</span>
-                </div>
+                </div> */}
               </div>
 
               <div className="mt-4 p-3 bg-blue-100 rounded text-center">
