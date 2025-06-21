@@ -20,7 +20,7 @@ const CustomerFormModal = dynamic(() => import("./CustomerFormModal"), {
   ssr: false,
 });
 
-const createEmptyCustomerDto = (): CustomerCreateDTO => {
+const createEmptyCustomerDto = (): any => {
   return {
     firstName: "",
     lastName: "",

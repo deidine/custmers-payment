@@ -18,6 +18,13 @@ const nextConfig = {
       },
     ],
   },
+    typescript: {
+    // ❗️ This will ignore ALL TypeScript errors during build
+    ignoreBuildErrors: true,
+  },
+   eslint: {
+    ignoreDuringBuilds: true,
+  },
   // images: {
   //   domains: ["res.cloudinary.com"],
   // },

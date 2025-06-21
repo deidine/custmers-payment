@@ -1,4 +1,5 @@
 import FormLogin from "@/components/forms/LoginForm";
+import { Suspense } from "react";
 
 export default function LoginPage() {
   return (
@@ -12,8 +13,9 @@ export default function LoginPage() {
             Đăng nhập
           </h2>
         </div>
-
+   <Suspense fallback={<div>Loading...</div>}>
         <FormLogin />
+    </Suspense>
       </div>
     </>
   );

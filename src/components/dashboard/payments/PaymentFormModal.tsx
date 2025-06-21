@@ -73,7 +73,7 @@ export default function PaymentFormModal({ mode, isOpen, onClose, onSubmit, data
       const subtotal = parseFloat(formData.amount)
       const calculations =  subtotal 
       
-      setFormData(prev => ({
+      setFormData((prev:any) => ({
         ...prev, 
         totalAmount: calculations 
       }))

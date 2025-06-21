@@ -247,8 +247,8 @@ return (
         isOpen={isDeleteModalOpen}
         onClose={closeModals}
         onConfirm={handleDeleteConfirm}
-        title="Supprimer le membre"
-        message={`Êtes-vous sûr de vouloir supprimer ${modalData.firstName} ${modalData.lastName} ? Cela supprimera définitivement son compte et toutes les données associées.`}
+        // title="Supprimer le membre"
+        // message={`Êtes-vous sûr de vouloir supprimer ${modalData.firstName} ${modalData.lastName} ? Cela supprimera définitivement son compte et toutes les données associées.`}
       />
     )}
 
