@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS public.customers
     membership_end_date date,
     status character varying(50) COLLATE pg_catalog."default",
     notes text COLLATE pg_catalog."default",
+    price_to_pay bigint,
     CONSTRAINT customers_pkey PRIMARY KEY (customer_id),
     CONSTRAINT customers_uuid_key UNIQUE (uuid),
     CONSTRAINT unique_phone_number UNIQUE (phone_number)
@@ -35,7 +36,6 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.customers
     OWNER to postgres;
-
 
 
     -- Table: public.payments
