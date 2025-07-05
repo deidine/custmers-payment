@@ -54,7 +54,7 @@ export async function getFilteredCustomers(
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
     const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
     
-    // Add condition to find customers who haven't paid this month
+    // Add condition to find customers who haven't paid this month or have unpaid balances
     whereConditions.push(`
       c.customer_id NOT IN (
         SELECT DISTINCT p.customer_id 
@@ -62,6 +62,12 @@ export async function getFilteredCustomers(
         WHERE p.customer_id = c.customer_id 
         AND p.payment_date >= $${paramIndex}
         AND p.payment_date <= $${paramIndex + 1}
+        AND p.status = 'COMPLETED'
+      )
+      OR c.price_to_pay > (
+        SELECT COALESCE(SUM(p.amount), 0)
+        FROM payments p
+        WHERE p.customer_id = c.customer_id
         AND p.status = 'COMPLETED'
       )
     `);
@@ -146,5 +152,3 @@ export async function getAllCustomersWithFilters(
   
   return getFilteredCustomers(page, limit, filters);
 }
-
- 

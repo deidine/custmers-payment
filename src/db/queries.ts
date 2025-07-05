@@ -631,38 +631,24 @@ export async function createOrUpdatePayment(data: PaymentCreateDTO) {
   const monthEnd = new Date(paymentDate.getFullYear(), paymentDate.getMonth() + 1, 0)
   // Check if a payment exists for the same customer and same month
   const checkQuery = `
-    SELECT * FROM payments 
+    SELECT payment_id, amount FROM payments 
     WHERE customer_id = $1 
-    AND payment_date >= $2 AND payment_date <= $3
+    AND EXTRACT(YEAR FROM payment_date) = $2
+    AND EXTRACT(MONTH FROM payment_date) = $3
     LIMIT 1
   `
-  const checkResult = await pool.query(checkQuery, [data.customerId, monthStart, monthEnd])
-console.log("monthStart,"+ data.customer_id +"monthEnd,"+JSON.stringify(monthEnd))
+  const checkResult = await pool.query(checkQuery, [data.customerId, paymentDate.getFullYear(), paymentDate.getMonth() + 1])
 
   if (checkResult.rows.length > 0) {
-    // Update existing payment
+    // Update existing payment by incrementing the amount
     const existingId = checkResult.rows[0].payment_id
-    const updateFields: string[] = []
-    const values: any[] = []
-    let index = 1
-
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined) {
-        const snakeKey = key.replace(/[A-Z]/g, (l) => `_${l.toLowerCase()}`)
-        updateFields.push(`${snakeKey} = $${index}`)
-        values.push(value)
-        index++
-      }
-    })
-
-    values.push(existingId) // for WHERE clause
     const updateQuery = `
       UPDATE payments 
-      SET ${updateFields.join(", ")}, updated_at = CURRENT_TIMESTAMP 
-      WHERE payment_id = $${index}
+      SET amount = COALESCE(amount, 0) + $1, updated_at = CURRENT_TIMESTAMP 
+      WHERE payment_id = $2
       RETURNING *
     `
-    const updateResult = await pool.query(updateQuery, values)
+    const updateResult = await pool.query(updateQuery, [data.amount, existingId])
     return updateResult.rows[0]
   } else {
     // Insert new payment
