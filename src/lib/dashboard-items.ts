@@ -25,6 +25,10 @@ export const dashboardSideItems: DashboardCategory[] = [
     title: "Payments",   
     options: ["CREATE", "UPDATE", "DELETE", "VIEW"],
   },
-  
+  {
+    id: DashboardCategoryEnum.NOPAYEDCUSTOMERS,
+    title: "Les clients non payés",
+    options: ["CREATE", "UPDATE", "DELETE", "VIEW"],
+  },
  
 ];

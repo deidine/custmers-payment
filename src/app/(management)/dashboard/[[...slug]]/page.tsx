@@ -6,11 +6,13 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import CustomerDashboard from "@/components/dashboard/customer/CustomerDashboard"; 
 import UserDashboard from "@/components/dashboard/usres/UserDashboard";
 import PaymentDashboard from "@/components/dashboard/payments/PaymentDashboard";
+import NoPayedCustomerDashboard from "@/components/dashboard/noPayedClients/NoPayedCustomerDashboard";
 
 const dashboardComponents: Partial<
   Record<DashboardCategoryEnum, () => JSX.Element>
 > = { 
   [DashboardCategoryEnum.CUSTOMERS]: CustomerDashboard, 
+  [DashboardCategoryEnum.NOPAYEDCUSTOMERS]: NoPayedCustomerDashboard, 
   [DashboardCategoryEnum.USERS]:  UserDashboard,
   [DashboardCategoryEnum.PAYMENTS]:  PaymentDashboard,
   [DashboardCategoryEnum.ATTENDANCE]: () => <div>Attendance</div>,

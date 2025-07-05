@@ -119,7 +119,7 @@ return (
         </div>
 
         {/* Email */}
-        <div className="mb-2">
+        <div  style={{display:"none"}}   className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">Email</label>
           <input
             type="email"
@@ -213,12 +213,12 @@ return (
         </div>
 
         {/* Section Adhésion */}
-        <div style={{display:"none"}}  className="col-span-2 mt-4">
+        <div  className="col-span-2 mt-4">
           <h3 className="text-lg font-semibold border-b pb-2 mb-3">Informations sur l'adhésion</h3>
         </div>
 
         {/* Type d'adhésion */}
-        <div style={{display:"none"}} className="mb-2">
+        <div  className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">Type d'adhésion</label>
           <select
             value={formData?.membershipType || "BASIC"}
@@ -234,7 +234,7 @@ return (
         </div>
 
         {/* Statut d'adhésion */}
-        <div  style={{display:"none"}}  className="mb-2">
+        <div  className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">Statut d'adhésion</label>
           <select
             value={formData?.status || "ACTIVE"}
@@ -249,7 +249,7 @@ return (
         </div>
 
         {/* Date de début */}
-        <div  style={{display:"none"}}  className="mb-2">
+        <div   className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">Date de début d'adhésion</label>
           <input
             type="date"
@@ -257,6 +257,15 @@ return (
               formData?.membershipStartDate ? new Date(formData.membershipStartDate).toISOString().split("T")[0] : new Date().toISOString().split("T")[0]
             }
             onChange={(e) => handleInputChange("membershipStartDate", e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-green-300"
+          />
+        </div>
+     <div className="mb-2">
+          <label className="block text-gray-700 text-sm font-bold mb-1"> Prix D'adhesion</label>
+          <input
+            type="number"
+            value={formData?.priceToPay || ""}
+            onChange={(e) => handleInputChange("priceToPay", e.target.value)}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-green-300"
           />
         </div>
