@@ -7,7 +7,7 @@ import { useState, useEffect, useMemo } from "react";
 import toast from "react-hot-toast";
 import { format, parse } from "date-fns";
 
-import type { PaymentWithCustomer } from "@/types/payment";
+import type { PaymentWithCustomer, PaymentStatus } from "@/types/payment";
 import { dashboardSideItems } from "@/lib/dashboard-items";
 import RefreshIcon from "../../../public/images/refresh-cw-alt.svg";
 import { Filter } from "lucide-react";
@@ -32,6 +32,14 @@ export default function PaymentDashboard() {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
+type StatusStats = {
+  [key in PaymentStatus]?: {
+    count: number;
+    totalAmount: number;
+  };
+};
+
+const [statistics, setStatistics] = useState<StatusStats>({});
   // Initialize filter states from URL parameters
   const [status, setStatus] = useState(searchParams.get("status") || "");
   const [customerId, setCustomerId] = useState(
@@ -96,7 +104,9 @@ export default function PaymentDashboard() {
       if (response.ok) {
         const { data, totalItems } = await response.json();
         setTotalPages(Math.ceil(totalItems / itemsPerPage));
-        setTableData(data as PaymentWithCustomer[]);
+        const tableData = data as PaymentWithCustomer[];
+        setTableData(tableData);
+        calculateStatistics(tableData);
       } else {
         throw new Error("Failed to fetch payments.");
       }
@@ -105,6 +115,9 @@ export default function PaymentDashboard() {
       toast.error("Error fetching payment data");
     } finally {
       setIsLoadingData(false);
+      if (tableData.length > 0) {
+        calculateStatistics(tableData);
+      }
     }
   };
 
@@ -118,6 +131,20 @@ export default function PaymentDashboard() {
   useEffect(() => {
     updateURL(currentPage);
   }, [currentPage]);
+
+  const calculateStatistics = (data: PaymentWithCustomer[]) => {
+    const statusStats = data.reduce((acc, payment) => {
+      const statusKey = payment.status as keyof StatusStats;
+      if (!acc[statusKey]) {
+        acc[statusKey] = { count: 0, totalAmount: 0 };
+      }
+      acc[statusKey].count += 1;
+      acc[statusKey].totalAmount += parseFloat(payment.amount);
+      return acc;
+    }, {});
+
+    setStatistics(statusStats as StatusStats);
+  };
 
   const handleCreateSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
@@ -255,6 +282,7 @@ export default function PaymentDashboard() {
       />
       <PaymentFilterModal
         isOpen={isFilterModalOpen}
+        statistics={statistics} 
         onClose={() => setIsFilterModalOpen(false)}
         onApplyFilters={handleApplyFilters}
         status={status}

@@ -6,9 +6,9 @@ import Header from "@/components/layouts/Header";
  import ParentProvider from "@/contexts/ParentProvider";
 
 export const metadata: Metadata = {
-  title: "Mua Thuốc Online | V2H Pharmacy Store - Cửa Hàng Thuốc 24/7",
+  title: "Mua Thuốc Online | V2H Payment Payment - Cửa Hàng Thuốc 24/7",
   description:
-    "Mua thuốc online tại V2H Pharmacy Store, cửa hàng thuốc hoạt động 24/7. Đảm bảo chất lượng, giao hàng nhanh chóng, tiện lợi và bảo mật.",
+    "Mua thuốc online tại V2H Payment Payment, cửa hàng thuốc hoạt động 24/7. Đảm bảo chất lượng, giao hàng nhanh chóng, tiện lợi và bảo mật.",
 };
 
 export default async function RootLayout({

@@ -14,6 +14,7 @@ interface PaymentFilterModalProps {
   customerId: string
   setCustomerId: (value: string) => void
   unpaidInMonth: string
+  statistics: any;
   setUnpaidInMonth: (value: string) => void
   onClearFilters: () => void
   onFilterUnpaidThisMonth: () => void
@@ -25,7 +26,7 @@ export default function PaymentFilterModal({
   onApplyFilters,
   status,
   setStatus,
- 
+ statistics,
  
   customerId,
   setCustomerId,
@@ -65,6 +66,21 @@ export default function PaymentFilterModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+     
+     
+           {/* Statistiques */}
+           <div className="mb-4 p-4 bg-gray-100 rounded-md">
+             <h3 className="text-lg font-semibold mb-2">Statistiques des paiements</h3>
+             {Object.entries(statistics).map(([status, stats]) => stats && (
+               <div key={status}>
+                 <p>Status: {status}</p>
+                 <p>Count: {stats.count}</p>
+                 <p>Total Amount: {stats.totalAmount.toFixed(2)}</p>
+               </div>
+             ))}
+           </div>
+     
+     
       <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">

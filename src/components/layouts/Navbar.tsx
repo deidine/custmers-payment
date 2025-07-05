@@ -47,18 +47,7 @@ export default function Navbar() {
               Dashboard
             </Link>
           )}
-
-          {/* Language selector */}
-          <select
-            name="language"
-            id="language"
-            className="bg-gray-700 text-white px-2 py-1 rounded"
-          >
-            <option value="french" defaultChecked>
-              Français
-            </option>
-            <option value="English">English</option>
-          </select>
+ 
         </div>
       </div>
     </nav>

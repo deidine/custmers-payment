@@ -1,16 +1,3 @@
--- Database: paymnet
-
--- DROP DATABASE IF EXISTS paymnet;
-
-CREATE DATABASE paymnet
-    WITH
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'C'
-    LC_CTYPE = 'C'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1
-    IS_TEMPLATE = False;
 -- Table: public.customers
 
 -- DROP TABLE IF EXISTS public.customers;
@@ -51,8 +38,6 @@ ALTER TABLE IF EXISTS public.customers
 
 
 
-
-
     -- Table: public.payments
 
 -- DROP TABLE IF EXISTS public.payments;
@@ -82,52 +67,54 @@ ALTER TABLE IF EXISTS public.payments
 
 
 
+
     -- Table: public.sessions
-	
-	-- DROP TABLE IF EXISTS public.sessions;
-	
-	CREATE TABLE IF NOT EXISTS public.sessions
-	(
-	    id integer NOT NULL DEFAULT nextval('sessions_id_seq'::regclass),
-	    uuid uuid DEFAULT gen_random_uuid(),
-	    user_uuid uuid NOT NULL,
-	    token text COLLATE pg_catalog."default" NOT NULL,
-	    expires_at timestamp without time zone NOT NULL,
-	    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-	    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-	    CONSTRAINT sessions_pkey PRIMARY KEY (id),
-	    CONSTRAINT sessions_uuid_key UNIQUE (uuid),
-	    CONSTRAINT fk_sessions_user_uuid FOREIGN KEY (user_uuid)
-	        REFERENCES public.users (uuid) MATCH SIMPLE
-	        ON UPDATE NO ACTION
-	        ON DELETE CASCADE
-	)
-	
-	TABLESPACE pg_default;
-	
-	ALTER TABLE IF EXISTS public.sessions
-	    OWNER to postgres;
-	-- Index: idx_sessions_token
-	
-	-- DROP INDEX IF EXISTS public.idx_sessions_token;
-	
-	CREATE INDEX IF NOT EXISTS idx_sessions_token
-	    ON public.sessions USING btree
-	    (token COLLATE pg_catalog."default" ASC NULLS LAST)
-	    TABLESPACE pg_default;
-	-- Index: idx_sessions_user_uuid
-	
-	-- DROP INDEX IF EXISTS public.idx_sessions_user_uuid;
-	
-	CREATE INDEX IF NOT EXISTS idx_sessions_user_uuid
-	    ON public.sessions USING btree
-	    (user_uuid ASC NULLS LAST)
-	    TABLESPACE pg_default;
+
+-- DROP TABLE IF EXISTS public.sessions;
+
+CREATE TABLE IF NOT EXISTS public.sessions
+(
+    id integer NOT NULL DEFAULT nextval('sessions_id_seq'::regclass),
+    uuid uuid DEFAULT gen_random_uuid(),
+    user_uuid uuid NOT NULL,
+    token text COLLATE pg_catalog."default" NOT NULL,
+    expires_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT sessions_pkey PRIMARY KEY (id),
+    CONSTRAINT sessions_uuid_key UNIQUE (uuid),
+    CONSTRAINT fk_sessions_user_uuid FOREIGN KEY (user_uuid)
+        REFERENCES public.users (uuid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.sessions
+    OWNER to postgres;
+-- Index: idx_sessions_token
+
+-- DROP INDEX IF EXISTS public.idx_sessions_token;
+
+CREATE INDEX IF NOT EXISTS idx_sessions_token
+    ON public.sessions USING btree
+    (token COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: idx_sessions_user_uuid
+
+-- DROP INDEX IF EXISTS public.idx_sessions_user_uuid;
+
+CREATE INDEX IF NOT EXISTS idx_sessions_user_uuid
+    ON public.sessions USING btree
+    (user_uuid ASC NULLS LAST)
+    TABLESPACE pg_default;
 
 
 
 
-        -- Table: public.user_profiles
+
+    -- Table: public.user_profiles
 
 -- DROP TABLE IF EXISTS public.user_profiles;
 
@@ -161,6 +148,7 @@ CREATE INDEX IF NOT EXISTS idx_user_profiles_user_uuid
     ON public.user_profiles USING btree
     (user_uuid ASC NULLS LAST)
     TABLESPACE pg_default;
+
 
 
 

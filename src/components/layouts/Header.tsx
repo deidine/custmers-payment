@@ -59,7 +59,7 @@ export default function Header() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <Link href={"/"}>
               <h1 className="text-3xl font-bold tracking-tight text-green-600 min-w-[200px]">
-                V2H Pharmacy Store
+               Payment
               </h1>
             </Link> 
           </div>
