@@ -625,36 +625,75 @@ console.log(placeholders.join(", "),columns.join(", "))
     throw err
   }
 }
-export async function createOrUpdatePayment(data: PaymentCreateDTO) {
-  const paymentDate = data.payment_date ? new Date(data.payment_date) : new Date()
-  const monthStart = new Date(paymentDate.getFullYear(), paymentDate.getMonth(), 1)
-  const monthEnd = new Date(paymentDate.getFullYear(), paymentDate.getMonth() + 1, 0)
-  // Check if a payment exists for the same customer and same month
-  const checkQuery = `
-    SELECT payment_id, amount FROM payments 
-    WHERE customer_id = $1 
-    AND EXTRACT(YEAR FROM payment_date) = $2
-    AND EXTRACT(MONTH FROM payment_date) = $3
-    LIMIT 1
-  `
-  const checkResult = await pool.query(checkQuery, [data.customerId, paymentDate.getFullYear(), paymentDate.getMonth() + 1])
+ export async function createOrUpdatePayment(data: PaymentCreateDTO) {
+  // 1  Work out the current month window
+  const paymentDate = data.paymentDate ? new Date(data.paymentDate) : new Date();
 
-  if (checkResult.rows.length > 0) {
-    // Update existing payment by incrementing the amount
-    const existingId = checkResult.rows[0].payment_id
-    const updateQuery = `
-      UPDATE payments 
-      SET amount = COALESCE(amount, 0) + $1, updated_at = CURRENT_TIMESTAMP 
-      WHERE payment_id = $2
-      RETURNING *
-    `
-    const updateResult = await pool.query(updateQuery, [data.amount, existingId])
-    return updateResult.rows[0]
-  } else {
-    // Insert new payment
-    return await createPayment(data)
+  const monthStart = new Date(paymentDate.getFullYear(), paymentDate.getMonth(), 1);
+  const monthEnd   = new Date(paymentDate.getFullYear(), paymentDate.getMonth() + 1, 0,
+                               23, 59, 59, 999);
+
+  // 2  Grab an existing row (if any) *and* include payment_date
+  const findSql = `
+    SELECT payment_id, amount, payment_date
+    FROM   payments
+    WHERE  customer_id = $1
+      AND  payment_date >= $2
+      AND  payment_date <= $3
+    LIMIT  1
+  `;
+  const { rows } = await pool.query(findSql, [data.customerId, monthStart, monthEnd]);
+
+  // 3  Update that row (incrementing amount) …
+  if (rows.length) {
+    const dbDate = new Date(rows[0].payment_date);
+    if (dbDate >= monthStart && dbDate <= monthEnd) {
+      const updateSql = `
+        UPDATE payments
+        SET    amount     = COALESCE(amount, 0) + $1,
+               updated_at = CURRENT_TIMESTAMP
+        WHERE  payment_id = $2
+        RETURNING *
+      `;
+      const { rows: updated } = await pool.query(updateSql, [data.amount, rows[0].payment_id]);
+      return updated[0];
+    }
   }
+
+  // 4  …or insert a fresh payment row
+  return createPayment(data);
 }
+
+// export async function createOrUpdatePayment(data: PaymentCreateDTO) {
+//   const paymentDate = data.payment_date ? new Date(data.payment_date) : new Date()
+//   const monthStart = new Date(paymentDate.getFullYear(), paymentDate.getMonth(), 1)
+//   const monthEnd = new Date(paymentDate.getFullYear(), paymentDate.getMonth() + 1, 0)
+//   // Check if a payment exists for the same customer and same month
+//   const checkQuery = `
+//     SELECT payment_id, amount FROM payments 
+//     WHERE customer_id = $1 
+//     AND EXTRACT(YEAR FROM payment_date) = $2
+//     AND EXTRACT(MONTH FROM payment_date) = $3
+//     LIMIT 1
+//   `
+//   const checkResult = await pool.query(checkQuery, [data.customerId, paymentDate.getFullYear(), paymentDate.getMonth() + 1])
+
+//   if (checkResult.rows[0].payment_date >= monthStart && checkResult.rows[0].payment_date <= monthEnd) {
+//     // Update existing payment by incrementing the amount
+//     const existingId = checkResult.rows[0].payment_id
+//     const updateQuery = `
+//       UPDATE payments 
+//       SET amount = COALESCE(amount, 0) + $1, updated_at = CURRENT_TIMESTAMP 
+//       WHERE payment_id = $2
+//       RETURNING *
+//     `
+//     const updateResult = await pool.query(updateQuery, [data.amount, existingId])
+//     return updateResult.rows[0]
+//   } else {
+//     // Insert new payment
+//     return await createPayment(data)
+//   }
+// }
 
 export async function updatePayment(paymentId: number, data: PaymentUpdateDTO) {
   // Create sets for SQL update

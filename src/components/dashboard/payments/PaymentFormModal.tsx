@@ -191,11 +191,12 @@ export default function PaymentFormModal({ mode, isOpen, onClose, onSubmit, data
       ...formData,
       amount: parseFloat(formData.totalAmount || formData.amount), // Use calculated total
       totalAmount: parseFloat(formData.totalAmount || formData.amount),
-     
+       paymentDate: formData.paymentDate,   // camel‑case
+
       customerId: parseInt(formData.customerId),
       ...(mode === "create" && { createdBy: 1 }), // Replace with actual logged in user ID
     }
-
+console.log(submissionData,"submissionData")
     onSubmit(event, submissionData)
   }
 

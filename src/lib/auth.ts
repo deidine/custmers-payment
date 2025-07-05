@@ -12,7 +12,7 @@ export async function encrypt(payload: any) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("1h")
+    .setExpirationTime("24h")
     .sign(key);
 }
 
@@ -59,7 +59,7 @@ export function setSessionToken(token: string) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    maxAge: 3600, // 1 hour
+    maxAge: 86_400, // 1 hour
     path: "/",
   });
 }
