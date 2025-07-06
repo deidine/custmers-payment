@@ -14,6 +14,7 @@ import Pagination from "@/components/ui/Pagination"
 import { useScrollLock } from "@/hooks/useScrollLock"
 import UserTable from "./UserTable"
 import Link from "next/link"
+import { useUser } from "@/contexts/UserContext"
 
 const UserFormModal = dynamic(() => import("./UserFormModal"), {
   loading: () => <div>Loading modal...</div>,
@@ -30,13 +31,14 @@ const createEmptyUserDto = (): UserCreateDTO => {
 export default function UserDashboard() {
   const [tableData, setTableData] = useState<User[]>([])
   const [isLoadingData, setIsLoadingData] = useState(true)
+ const {user}= useUser()
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [emptyData, setEmptyData] = useState<UserCreateDTO>(createEmptyUserDto())
 
   useScrollLock(isCreateModalOpen)
 
-  const rowOptions = dashboardSideItems.find((item) => item.id === "users")?.options || []
+  const rowOptions = dashboardSideItems({ role: user?.role ?? "" }).find((item) => item.id === "users")?.options || []
 
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)

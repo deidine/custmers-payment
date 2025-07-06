@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { dashboardSideItems } from "@/lib/dashboard-items";
+import { dashboardSideItems, dashboardSideItems2 } from "@/lib/dashboard-items";
 import ReactHotToast from "../ui/ReactHotToast";
 
 interface DashboardLayoutProps {
@@ -24,7 +24,7 @@ export default function DashboardLayout({
           </h2>
         </div>
         <nav className="mt-4">
-          {dashboardSideItems.map((sideItem) => (
+          {dashboardSideItems2.map((sideItem) => (
             <Link
               key={sideItem.id}
               href={`/dashboard/${sideItem.id}`}

@@ -8,16 +8,17 @@ import { dashboardSideItems } from "@/lib/dashboard-items";
  import CustomerTable from "./CustomerTable";
 import LoadingTable from "../LoadingTable";
 import Pagination from "@/components/ui/Pagination";
+import { useUser } from "@/contexts/UserContext";
   
  
 
 export default function NoPayedCustomerDashboard() {
   const [tableData, setTableData] = useState<Customer[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
-
+const {user}= useUser()
    
   const rowOptions =
-    dashboardSideItems.find((item) => item.id === "customers")?.options || [];
+    dashboardSideItems({ role: user?.role ?? "" }).find((item) => item.id === "customers")?.options || [];
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);

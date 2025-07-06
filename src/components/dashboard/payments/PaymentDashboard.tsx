@@ -18,6 +18,7 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 import PaymentTable from "./PaymentTable";
 import { fr } from "date-fns/locale";
 import PaymentFilterModal from "./PaymentFilterModal";
+import { useUser } from "@/contexts/UserContext";
 
 const PaymentFormModal = dynamic(() => import("./PaymentFormModal"), {
   loading: () => <div>Loading modal...</div>,
@@ -48,6 +49,7 @@ const [statistics, setStatistics] = useState<StatusStats>({});
   const [unpaidInMonth, setUnpaidInMonth] = useState(
     searchParams.get("unpaidInMonth") || ""
   );
+  const { user } = useUser();
 
   useScrollLock(isCreateModalOpen);
   const formattedMonth = useMemo(() => {
@@ -56,7 +58,7 @@ const [statistics, setStatistics] = useState<StatusStats>({});
     return format(date, "MMMM yyyy", { locale: fr });
   }, [unpaidInMonth]);
   const rowOptions =
-    dashboardSideItems.find((item) => item.id === "payments")?.options || [];
+    dashboardSideItems({ role: user?.role ?? "" }).find((item) => item.id === "payments")?.options || [];
 
   const [currentPage, setCurrentPage] = useState(
     Number.parseInt(searchParams.get("page") || "1")

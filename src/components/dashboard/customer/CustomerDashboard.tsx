@@ -14,6 +14,7 @@ import LoadingTable from "../LoadingTable";
 import Pagination from "@/components/ui/Pagination";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import CustomerFilterModal from "./CustomerFilterModal";
+import { useUser } from "@/contexts/UserContext";
 
 const CustomerFormModal = dynamic(() => import("./CustomerFormModal"), {
   loading: () => <div>Loading modal...</div>,
@@ -32,7 +33,7 @@ const createEmptyCustomerDto = (): any => {
 export default function CustomerDashboard() {
   const [tableData, setTableData] = useState<Customer[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
-
+ const {user}= useUser()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [emptyData, setEmptyData] = useState<CustomerCreateDTO>(
     createEmptyCustomerDto()
@@ -48,7 +49,7 @@ export default function CustomerDashboard() {
   useScrollLock(isCreateModalOpen);
 
   const rowOptions =
-    dashboardSideItems.find((item) => item.id === "customers")?.options || [];
+    dashboardSideItems({ role: user?.role ?? "" }).find((item) => item.id === "customers")?.options || [];
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -161,7 +162,7 @@ export default function CustomerDashboard() {
     <>
       {/* Dashboard Options */}
       <div className="flex justify-start items-start gap-2 mb-2">
-        <button
+         <button
           className="bg-green-600 text-white px-4 py-2 rounded flex items-center justify-center w-12 h-10"
           onClick={handleRefresh}
         >

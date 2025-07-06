@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { dashboardSideItems } from "@/lib/dashboard-items";
+import { dashboardSideItems, dashboardSideItems2 } from "@/lib/dashboard-items";
 import { DashboardCategoryEnum } from "@/lib/dashboard-categories";
 import DashboardLayout from "@/components/dashboard/DashboardLayout"; 
 import CustomerDashboard from "@/components/dashboard/customer/CustomerDashboard"; 
@@ -26,10 +26,10 @@ export default function DashboardPage({
 }) {
   const { slug } = params;
   const category: DashboardCategoryEnum =
-    (slug?.[0] as DashboardCategoryEnum) || dashboardSideItems[0].id;
+    (slug?.[0] as DashboardCategoryEnum) || dashboardSideItems2[0].id;
 
   const DashboardComponent = dashboardComponents[category];
-  const title = dashboardSideItems.find((item) => item.id === category)?.title;
+  const title = dashboardSideItems2.find((item) => item.id === category)?.title;
 
   if (!DashboardComponent || !title) return notFound();
 
