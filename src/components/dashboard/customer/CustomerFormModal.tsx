@@ -4,6 +4,7 @@ import type React from "react"
 
 import type { Customer, CustomerCreateDTO, CustomerUpdateDTO } from "@/types/customer"
 import { Gender, CustomerStatus, MembershipType } from "@/types/customer"
+import ImageUpload from "@/components/ImageCapture"
 
 interface CustomerFormModalProps {
   mode: "create" | "update"
@@ -30,6 +31,11 @@ export default function CustomerFormModal({ mode, isOpen, onClose, onSubmit, dat
   useEffect(() => {
     setFormData(filteredData)
   }, [filteredData])
+   const handleImageChange = (file: File | null, previewUrl: string | null) => {
+    handleInputChange("profilePictureFile", file)
+    // If you need to store the preview URL separately
+    handleInputChange("profilePicturePreview", previewUrl)
+  }
 
   const handleInputChange = (key: string, value: any) => {
     setFormData((prev: any) => ({
@@ -63,7 +69,16 @@ return (
         <div className="col-span-2">
           <h3 className="text-lg font-semibold border-b pb-2 mb-3">Informations de base</h3>
         </div>
-
+           <div className="col-span-2 mb-4">
+                     <ImageUpload
+                       value={formData?.profilePictureUrl}
+                       onChange={handleImageChange}
+                       maxSize={5}
+                       label="Profile Picture"
+                       placeholder="No Image\n(Click to upload)"
+                     />
+                   </div>
+         
         {/* Prénom */}
         <div className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1">Prénom</label>
