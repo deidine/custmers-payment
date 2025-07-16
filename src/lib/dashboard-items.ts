@@ -33,6 +33,16 @@ export const dashboardSideItems = (
     id: DashboardCategoryEnum.NOPAYEDCUSTOMERS,
     title: "Les clients non payés",
     options: user?.role === "ADMIN"? [  "UPDATE", "DELETE", "CREATE", "VIEW"] : [ "VIEW"],
+  }, 
+    {
+    id: DashboardCategoryEnum.STATISTICS,
+    title: "Statistics",
+    options: user?.role === "ADMIN"? [  "UPDATE", "DELETE", "CREATE", "VIEW"] : [ "VIEW"],
+  },
+   {
+    id: DashboardCategoryEnum.REPORTS,
+    title: "Reports",
+    options: user?.role === "ADMIN"? [  "UPDATE", "DELETE", "CREATE", "VIEW"] : [ "VIEW"],
   },
 ];
 
@@ -58,5 +68,14 @@ export const dashboardSideItems2: DashboardCategory[] = [
     title: "Les clients non payés",
     options: ["CREATE", "UPDATE", "DELETE", "VIEW"],
   },
- 
+ {
+    id: DashboardCategoryEnum.STATISTICS,
+    title: "Statistics",
+    options:   [  "UPDATE", "DELETE", "CREATE", "VIEW"],
+  },
+   {
+    id: DashboardCategoryEnum.REPORTS,
+    title: "Reports",
+    options:  [  "UPDATE", "DELETE", "CREATE", "VIEW"]  ,
+  },
 ];

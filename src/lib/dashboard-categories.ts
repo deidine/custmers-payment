@@ -6,5 +6,7 @@ export enum DashboardCategoryEnum {
   USERS = "users",
   PAYMENTS = "payments",
   ATTENDANCE = "attendance",
-  REPORTS = "reports", 
+  REPORTS = "subscription-pdf", 
+  STATISTICS = "statistics",
+
 }
