@@ -18,7 +18,9 @@ export enum Gender {
 
 export type Customer = {
   customerId: number
-  uuid?: string
+  uuid?: string 
+  profilePictureUrl?: any
+
   firstName: string
   lastName: string
   gender?: Gender

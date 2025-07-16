@@ -392,6 +392,8 @@ export async function createCustomer(data: CustomerCreateDTO) {
     if (value !== undefined) {
       // Convert camelCase to snake_case
       const snakeKey = key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
+      if (snakeKey === 'profile_picture_file') return
+      if (snakeKey === 'profile_picture_preview') return
       columns.push(snakeKey)
       placeholders.push(`$${paramIndex}`)
       values.push(value)
