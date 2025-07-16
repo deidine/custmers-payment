@@ -8,6 +8,8 @@ import toast from "react-hot-toast"
 import type { User } from "@/types/user"
 import { useScrollLock } from "@/hooks/useScrollLock"
 import DeleteModal from "../DeleteModal"
+import UserAttendanceModal from "./UserAttendanceModal"
+import UserAttendanceModel from "../attendance/UserAttendanceModel"
 
 const UserFormModal = dynamic(() => import("./UserFormModal"), {
   loading: () => <p>Loading modal...</p>,
@@ -23,12 +25,14 @@ interface UserTableProps {
 export default function UserTable({ tableData, rowOptions = [], onRefresh }: UserTableProps) {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false);
 
   // Lock scroll when any modal is open
-  useScrollLock(isUpdateModalOpen || isDeleteModalOpen)
+  useScrollLock(isUpdateModalOpen || isDeleteModalOpen || isAttendanceModalOpen )
 
   const [modalData, setModalData] = useState<any>(null)
   const [isSelectedRow, setIsSelectedRow] = useState<any>(null)
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   const openUpdateModal = (rowData: any) => {
     setModalData(rowData) // store the row data
@@ -43,6 +47,9 @@ export default function UserTable({ tableData, rowOptions = [], onRefresh }: Use
   const closeModals = () => {
     setIsUpdateModalOpen(false)
     setIsDeleteModalOpen(false)
+    setIsAttendanceModalOpen(false);
+    setSelectedUserId(null);
+
     setModalData(null)
   }
 
@@ -157,6 +164,19 @@ export default function UserTable({ tableData, rowOptions = [], onRefresh }: Use
                     </button>
                   )}
 
+                  {/* View Attendance button */}
+                  {rowOptions.includes("VIEW") && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedUserId(row.userId);
+                        setIsAttendanceModalOpen(true);
+                      }}
+                      className="text-nowrap text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
+                    >
+                      {"attendance"}
+                    </button>
+                  )}
                   {/* Delete button */}
                   {rowOptions.includes("DELETE") && (
                     <button
@@ -176,6 +196,21 @@ export default function UserTable({ tableData, rowOptions = [], onRefresh }: Use
       {/* Delete confirmation modal */}
       {isDeleteModalOpen && modalData && (
         <DeleteModal isOpen={isDeleteModalOpen} onClose={closeModals} onConfirm={handleDeleteConfirm} />
+      )}
+      {/* User Attendance Modal */}
+      {isAttendanceModalOpen && selectedUserId && (
+        <UserAttendanceModal
+          isOpen={isAttendanceModalOpen}
+          onClose={closeModals}
+          title={ "attendanceDetails"}
+        >
+          <UserAttendanceModel
+            onRefresh={onRefresh}
+            userData={
+              tableData.filter((user) => user.userId == selectedUserId)[0]
+            }
+          />
+        </UserAttendanceModal>
       )}
 
       {/* Update user modal */}

@@ -194,23 +194,7 @@ export async function updateSessionByToken(
 export async function getUserById(userId: number) {
   const query = `
     SELECT 
-      u.user_id, 
-      u.uuid, 
-      u.username, 
-      u.password, 
-      u.role, 
-      u.is_enabled, 
-      u.gender, 
-      u.date_of_joining, 
-      u.city, 
-      u.state, 
-      u.state_code, 
-      u.street_address,
-      u.phone_number,
-      u.email,
-      u.status,
-      u.created_at, 
-      u.updated_at 
+      *
     FROM "public"."users" u 
     WHERE u.user_id = $1
   `
@@ -895,5 +879,350 @@ export async function deleteStaffAttendance(attendanceId: number) {
   } catch (err: any) {
     console.error("Database error:", err)
     throw err
+  }
+}
+
+
+// New HR-related functions
+export async function getUserAttendanceSummaries(userId: number, year?: number) {
+  let query = `
+    SELECT * FROM "public"."attendance_summary"
+    WHERE user_id = $1
+  `
+
+  const params = [userId]
+
+  if (year) {
+    query += ` AND year = $2`
+    params.push(year)
+  }
+
+  query += ` ORDER BY year DESC, month DESC`
+
+  try {
+    const result = await pool.query(query, params)
+    return result.rows
+  } catch (err: any) {
+    console.error("Database error:", err)
+    throw err
+  }
+}
+
+export async function createAttendanceSummary(data: any) {
+  const { userId, year, month, presentDays, absentDays, leaveDays } = data
+
+  const query = `
+    INSERT INTO "public"."attendance_summary" (
+      user_id, 
+      year, 
+      month, 
+      present_days, 
+      absent_days, 
+      leave_days
+    ) 
+    VALUES ($1, $2, $3, $4, $5, $6) 
+    ON CONFLICT (user_id, year, month) 
+    DO UPDATE SET 
+      present_days = EXCLUDED.present_days,
+      absent_days = EXCLUDED.absent_days,
+      leave_days = EXCLUDED.leave_days,
+      updated_at = CURRENT_TIMESTAMP
+    RETURNING *
+  `
+
+  try {
+    const result = await pool.query(query, [userId, year, month, presentDays, absentDays, leaveDays])
+    return result.rows[0]
+  } catch (err: any) {
+    console.error("Database error:", err)
+    throw err
+  }
+}
+
+export async function getUserAttendance(userId: number, startDate?: string, endDate?: string) {
+  let query = `
+    SELECT * FROM "public"."attendance"
+    WHERE user_id = $1
+  `
+
+  const params: any[] = [userId]
+  let paramIndex = 2
+
+  if (startDate) {
+    query += ` AND date >= $${paramIndex}`
+    params.push(startDate)
+    paramIndex++
+  }
+
+  if (endDate) {
+    query += ` AND date <= $${paramIndex}`
+    params.push(endDate)
+  }
+
+  query += ` ORDER BY date DESC`
+
+  try {
+    const result = await pool.query(query, params)
+    return result.rows
+  } catch (err: any) {
+    console.error("Database error:", err)
+    throw err
+  }
+}
+
+export async function createOrUpdateAttendance(data: any) {
+  const { userId, date, status, checkInTime, checkOutTime } = data
+
+  const query = `
+    INSERT INTO "public"."attendance" (
+      user_id, 
+      date, 
+      status, 
+      check_in_time, 
+      check_out_time
+    ) 
+    VALUES ($1, $2, $3, $4, $5) 
+    ON CONFLICT (user_id, date) 
+    DO UPDATE SET 
+      status = EXCLUDED.status,
+      check_in_time = EXCLUDED.check_in_time,
+      check_out_time = EXCLUDED.check_out_time,
+      updated_at = CURRENT_TIMESTAMP
+    RETURNING *
+  `
+
+  try {
+    const result = await pool.query(query, [userId, date, status, checkInTime, checkOutTime])
+    return result.rows[0]
+  } catch (err: any) {
+    console.error("Database error:", err)
+    throw err
+  }
+}
+
+
+
+export async function deleteAttendance(attendanceId: number) {
+  const query = `DELETE FROM "public"."attendance" WHERE attendance_id = $1 RETURNING *`
+
+  try {
+    const result = await pool.query(query, [attendanceId])
+    return result.rows[0]
+  } catch (err: any) {
+    console.error("Database error:", err)
+    throw err
+  }
+}
+
+
+export async function getUserPersonnelDetailByUserId(userId: number) {
+  const query = `
+    SELECT
+      user_id,
+      personnel_date_of_joining,
+      personnel_address,
+      cv_url,
+      contract_url,
+      salary,
+      work_days,
+      on_call_shifts_per_month,
+      substitutes,
+      loans,
+      incentives,
+      debts,
+      records,
+      blacklist_reason
+    FROM "public"."user_personnel_details"
+    WHERE user_id = $1
+  `; 
+    const result = await pool.query(query, [userId]);
+    return result.rows[0] || null;
+  
+}
+ 
+export async function createOrUpdateUserPersonnelDetail(
+  userId: number,
+  data: any  
+) {
+  // Check if a record exists to decide between INSERT or UPDATE
+  const existingPersonnel = await pool.query('SELECT user_id FROM public.user_personnel_details WHERE user_id = $1', [userId]);
+
+  if (existingPersonnel.rows.length > 0) {
+    // UPDATE operation
+    const query = `
+      UPDATE public.user_personnel_details
+      SET
+        personnel_date_of_joining = $1,
+        personnel_address = $2,
+        cv_url = $3,
+        contract_url = $4,
+        salary = $5,
+        on_call_shifts_per_month = $6,
+        blacklist_reason = $7,
+        work_days = $8,
+        substitutes = $9,
+        loans = $10,
+        incentives = $11,
+        debts = $12,
+        records = $13
+      WHERE user_id = $14
+      RETURNING *;
+    `;
+    const values = [
+      data.personnel_date_of_joining,
+      data.personnel_address,
+      data.cv_url,
+      data.contract_url,
+      data.salary,
+      data.on_call_shifts_per_month,
+      data.blacklist_reason,
+      JSON.stringify(data.workDays), // Store JSONB as string
+      JSON.stringify(data.substitutes),
+      JSON.stringify(data.loans),
+      JSON.stringify(data.incentives),
+      JSON.stringify(data.debts),
+      JSON.stringify(data.records),
+      userId,
+    ];
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  } else {
+    // INSERT operation
+    const query = `
+      INSERT INTO public.user_personnel_details (
+        user_id,
+        personnel_date_of_joining,
+        personnel_address,
+        cv_url,
+        contract_url,
+        salary,
+        on_call_shifts_per_month,
+        blacklist_reason,
+        work_days,
+        substitutes,
+        loans,
+        incentives,
+        debts,
+        records
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+      RETURNING *;
+    `;
+    const values = [
+      userId,
+      data.personnel_date_of_joining,
+      data.personnel_address,
+      data.cv_url,
+      data.contract_url,
+      data.salary,
+      data.on_call_shifts_per_month,
+      data.blacklist_reason,
+      JSON.stringify(data.workDays),
+      JSON.stringify(data.substitutes),
+      JSON.stringify(data.loans),
+      JSON.stringify(data.incentives),
+      JSON.stringify(data.debts),
+      JSON.stringify(data.records),
+    ];
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  }
+}
+export async function deleteUserPersonnelDetail(userId: number) {
+  const query = `DELETE FROM "public"."user_personnel_details" WHERE user_id = $1 RETURNING *`;
+  try {
+    const result = await pool.query(query, [userId]);
+    return result.rows[0];
+  } catch (err: any) {
+    console.error("Database error:", err);
+    throw err;
+  }
+}
+
+export async function getAllUsersPhoneNames(userId: number) {
+ 
+  const queryData = `
+    SELECT 
+      u.user_id,  
+      u.username,  
+      u.role,
+    u.is_enabled,
+      u.full_name,
+      u.phone_number 
+    FROM "public"."users" u 
+    ORDER BY u.updated_at DESC
+  `
+  const queryCount = `SELECT COUNT(*) AS "totalItems" FROM "public"."users"`
+  const curentUser = `
+    SELECT 
+    *
+    FROM "public"."users" u 
+    WHERE u.user_id = $1
+  `
+  try {  
+    const [resultData, resultCount, currentUser] = await Promise.all([
+      pool.query(queryData ),
+      pool.query(queryCount),
+      pool.query(curentUser, [userId]),
+    ])
+    const allUsers = resultData.rows
+    const totalItems = Number.parseInt(resultCount.rows[0].totalItems, 10)
+    const dataCurrentUser = currentUser.rows[0]
+    return { allUsers, totalItems,dataCurrentUser }
+  } catch (err: any) {
+    console.error("Database error:", err)
+    throw err
+  }
+}
+
+
+export async function updateAttendance(attendanceId: number, data: Partial<any>) {
+  const updates: string[] = [];
+  const values: any[] = [];
+  let paramIndex = 1;
+
+  for (const key in data) {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      const value = (data as any)[key]; 
+      let dbColumnName: string;
+      switch (key) {
+        case 'userId':
+          dbColumnName = 'user_id';
+          break;
+        case 'checkInTime':
+          dbColumnName = 'check_in_time';
+          break;
+        case 'checkOutTime':
+          dbColumnName = 'check_out_time';
+          break; 
+        default: 
+          dbColumnName = key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+          break;
+      }
+      
+      updates.push(`${dbColumnName} = $${paramIndex}`);
+      values.push(value);
+      paramIndex++;
+    }
+  }
+  updates.push(`updated_at = CURRENT_TIMESTAMP`);
+  if (updates.length === 1 && updates[0] === 'updated_at = CURRENT_TIMESTAMP') {
+    throw new Error("No specific fields provided for attendance update.");
+  }
+  values.push(attendanceId);
+  const query = `
+    UPDATE "public"."attendance"
+    SET ${updates.join(", ")}
+    WHERE attendance_id = $${paramIndex}
+    RETURNING *;
+  `;
+  try {
+    const result = await pool.query(query, values);
+    if (result.rows.length === 0) {
+      throw new Error(`Attendance record with ID ${attendanceId} not found.`);
+    }
+    return result.rows[0];
+  } catch (err: any) {
+    console.error("Database error updating attendance record:", err);
+    throw err;
   }
 }
