@@ -55,5 +55,11 @@ export type CustomerAttendance = {
   createdAt: Date
   updatedAt: Date
 }
-
+export enum AttendanceStatus {
+  PRESENT = "PRESENT",
+  ABSENT = "ABSENT",
+  ON_LEAVE = "ON_LEAVE",
+  CANCELLED = "CANCELLED",
+  RESCHEDULED = "RESCHEDULED",
+}
 export type CustomerAttendanceCreateDTO = Omit<CustomerAttendance, "attendanceId" | "createdAt" | "updatedAt">
