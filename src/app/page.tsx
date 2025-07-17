@@ -2,6 +2,7 @@ import { Suspense } from "react";
 
 import ErrorBoundary from "@/components/errors/ErrorBoundary";
   import ReactHotToast from "@/components/ui/ReactHotToast";
+import DashboardPage from "./(management)/dashboard/[[...slug]]/page";
 
 export const revalidate = 10;
 
@@ -12,8 +13,9 @@ export default async function Home({
 }) {
    
   return (
-    <div className="flex flex-col gap-4 my-8 mx-8">
+    <div >
       <ReactHotToast />
+        <DashboardPage params={{ slug: [] }} />
 
  
    

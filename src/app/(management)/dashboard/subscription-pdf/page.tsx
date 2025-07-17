@@ -1,5 +1,6 @@
 "use client"
 
+import DashboardLayout from "@/components/dashboard/DashboardLayout"
 import { generateAllSubscriptionsPdf, generateSubscriptionPdf } from "@/db/statistics"
 import { useState } from "react" 
 export default function SubscriptionPdfPage() {
@@ -50,6 +51,8 @@ export default function SubscriptionPdfPage() {
   }
 
   return (
+              <DashboardLayout title={"subscription-pdf"} activeSlug={"subscription-pdf"}>
+    
     <div className="min-h-screen bg-gray-100 p-6 sm:p-8 lg:p-10 flex flex-col items-center">
       <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-8">Générer les PDFs de Souscription</h1>
 
@@ -124,5 +127,6 @@ export default function SubscriptionPdfPage() {
         </div>
       )}
     </div>
+    </DashboardLayout>
   )
 }

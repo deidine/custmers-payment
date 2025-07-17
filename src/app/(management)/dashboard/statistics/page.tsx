@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
   import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { PaymentRow } from "@/types"
 import { getPaymentStatistics, getCustomerStatistics } from "@/db/statistics"
+import DashboardLayout from "@/components/dashboard/DashboardLayout"
 
 interface PaymentStats {
   totalPaymentsToday: number
@@ -57,6 +58,8 @@ export default function DashboardPage() {
   }
 
   return (
+           <DashboardLayout title={"clientPresence"} activeSlug={"statistics"}>
+ 
     <div className="min-h-screen bg-gray-100 p-6 sm:p-8 lg:p-10">
       <header className="mb-8">
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">Tableau de Bord des Paiements</h1>
@@ -211,5 +214,6 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
+    </DashboardLayout>
   )
 }
