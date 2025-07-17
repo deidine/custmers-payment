@@ -19,7 +19,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
   const [isAddAttendanceModalOpen, setIsAddAttendanceModalOpen] = useState(false)
   const [selectedDateForAdd, setSelectedDateForAdd] = useState(new Date().toISOString().split("T")[0])
   const [selectedStatusForAdd, setSelectedStatusForAdd] = useState<AttendanceStatus>(AttendanceStatus.PRESENT)
-
+  const [poids, setPoids] = useState(0)
   const fetchClientAndAttendance = useCallback(async () => {
     if (!clientId) {
       setError("Patient information is missing.")
@@ -75,6 +75,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
         body: JSON.stringify({
           attendanceDate: selectedDateForAdd,
           status: selectedStatusForAdd,
+          poids: poids,
         }),
       })
 
@@ -119,17 +120,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
     }
   }
 
-  // A helper function to render a single info item
-  const InfoItem = ({ label, value, icon: Icon }: { label: string; value: React.ReactNode; icon: React.ElementType }) => (
-    <div className="space-y-1">
-      <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
-        {Icon && <Icon className="h-4 w-4" />}
-        {label}
-      </div>
-      <p className="text-gray-900">{value}</p>
-    </div>
-  );
-
+ 
   if (loading) {
     return (
       <div className="container mx-auto p-6 space-y-6">
@@ -213,7 +204,6 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
           
         </div>
       </div>
-
       {/* Attendance Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <DailyPatientAttendanceTable
@@ -223,6 +213,8 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
           isAddAttendanceModalOpen={isAddAttendanceModalOpen}
           setIsAddAttendanceModalOpen={setIsAddAttendanceModalOpen}
           selectedDateForAdd={selectedDateForAdd}
+          setPoids={setPoids}
+          poids={poids}
           setSelectedDateForAdd={setSelectedDateForAdd}
           selectedStatusForAdd={selectedStatusForAdd}
           setSelectedStatusForAdd={setSelectedStatusForAdd}

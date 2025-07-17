@@ -47,13 +47,13 @@ export async function POST(
       return NextResponse.json({ error: 'Client not found' }, { status: 404 });
     }
 
-    const { attendanceDate, status, notes } = await request.json();
+    const { attendanceDate, status, notes,poids } = await request.json();
 
     if (!attendanceDate || !status) {
       return NextResponse.json({ error: 'Date and Status are required' }, { status: 400 });
     }
 
-    const newAttendance = await createAttendance({ clientId, attendanceDate, status, notes });
+    const newAttendance = await createAttendance({ clientId, attendanceDate, status, notes,poids });
     return NextResponse.json(newAttendance, { status: 201 });
   } catch (error) {
     console.error('Error adding patient attendance:', error);

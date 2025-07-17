@@ -14,6 +14,8 @@ interface DailyPatientAttendanceTableProps {
   isAddAttendanceModalOpen: boolean
   setIsAddAttendanceModalOpen: (isOpen: boolean) => void
   selectedDateForAdd: string
+  poids: any
+  setPoids: (poids: any) => void
   setSelectedDateForAdd: (date: string) => void
   selectedStatusForAdd: AttendanceStatus
   setSelectedStatusForAdd: (status: AttendanceStatus) => void
@@ -27,6 +29,8 @@ export default function DailyPatientAttendanceTable({
   isAddAttendanceModalOpen,
   setIsAddAttendanceModalOpen,
   selectedDateForAdd,
+  setPoids,
+poids,
   setSelectedDateForAdd,
   selectedStatusForAdd,
   setSelectedStatusForAdd,
@@ -54,7 +58,7 @@ export default function DailyPatientAttendanceTable({
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_API_URL}/clients/${clientData.clientId}/attendance/${selectedAttendance.attendanceId}`,
+        `${process.env.NEXT_PUBLIC_BASE_API_URL}/customers/${clientData.customerId}/attendance/${selectedAttendance.attendanceId}`,
         {
           method: "DELETE",
         },
@@ -339,7 +343,19 @@ export default function DailyPatientAttendanceTable({
                       required
                     />
                   </div>
-
+   <div>
+                    <label htmlFor="attendance-date" className="block text-sm font-medium text-gray-700 mb-1">
+                      poids
+                    </label>
+                    <input
+                      id="poids"
+                      type="text"
+                      value={poids}
+                      onChange={(e) => setPoids(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      required
+                    />
+                  </div>
                   <div>
                     <label htmlFor="attendance-status" className="block text-sm font-medium text-gray-700 mb-1">
                     {"status"}  

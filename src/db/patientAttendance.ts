@@ -6,6 +6,7 @@ export type AttendanceCreateDTO = {
   attendanceDate: string; // YYYY-MM-DD format
   status: 'PRESENT' | 'ABSENT' | 'CANCELLED' | 'RESCHEDULED' | 'ON_LEAVE';
   notes?: string;
+  poids?: any
 };
 
 export type AttendanceUpdateDTO = {
@@ -63,10 +64,10 @@ export async function getAttendanceById(attendanceId: number) {
 
 // Create a new attendance record
 export async function createAttendance(data: AttendanceCreateDTO) {
-  const { clientId, attendanceDate, status, notes } = data;
+  const { clientId, attendanceDate, status, notes, poids } = data;
   const query = `
-    INSERT INTO public.patient_attendance (customer_id, attendance_date, status, notes)
-    VALUES ($1, $2, $3, $4)
+    INSERT INTO public.patient_attendance (customer_id, attendance_date, status, notes,poids_now)
+    VALUES ($1, $2, $3, $4, $5)
     RETURNING 
       attendance_id AS "attendanceId",
       customer_id AS "clientId",
@@ -77,7 +78,7 @@ export async function createAttendance(data: AttendanceCreateDTO) {
       updated_at AS "updatedAt";
   `;
   try {
-    const result = await pool.query(query, [clientId, attendanceDate, status, notes]);
+    const result = await pool.query(query, [clientId, attendanceDate, status, notes, poids]);
     return result.rows[0];
   } catch (err: any) {
     console.error("Database error creating attendance:", err);

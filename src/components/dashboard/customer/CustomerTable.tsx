@@ -1,118 +1,135 @@
-"use client"
-import dynamic from "next/dynamic"
-import type React from "react"
-import { useState } from "react"
-import toast from "react-hot-toast"
-import { CreditCard, ClipboardList } from "lucide-react"
+"use client";
+import dynamic from "next/dynamic";
+import type React from "react";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { CreditCard, ClipboardList } from "lucide-react";
 
-import type { Customer } from "@/types/customer"
-import { useScrollLock } from "@/hooks/useScrollLock"
-import DeleteModal from "../DeleteModal"
+import type { Customer } from "@/types/customer";
+import { useScrollLock } from "@/hooks/useScrollLock";
+import DeleteModal from "../DeleteModal";
 
 const CustomerFormModal = dynamic(() => import("./CustomerFormModal"), {
   loading: () => <p>Loading modal...</p>,
   ssr: false,
-})
+});
 
 interface CustomerTableProps {
-  tableData: Customer[]
-  rowOptions?: string[]
-  onRefresh: () => void
+  tableData: Customer[];
+  rowOptions?: string[];
+  onRefresh: () => void;
 }
 
-export default function CustomerTable({ tableData, rowOptions = [], onRefresh }: CustomerTableProps) {
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+export default function CustomerTable({
+  tableData,
+  rowOptions = [],
+  onRefresh,
+}: CustomerTableProps) {
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Lock scroll when any modal is open
-  useScrollLock(isUpdateModalOpen || isDeleteModalOpen)
+  useScrollLock(isUpdateModalOpen || isDeleteModalOpen);
 
-  const [modalData, setModalData] = useState<any>(null)
-  const [isSelectedRow, setIsSelectedRow] = useState<any>(null)
+  const [modalData, setModalData] = useState<any>(null);
+  const [isSelectedRow, setIsSelectedRow] = useState<any>(null);
 
   const openUpdateModal = (rowData: any) => {
-    setModalData(rowData) // store the row data
-    setIsUpdateModalOpen(true)
-  }
+    setModalData(rowData); // store the row data
+    setIsUpdateModalOpen(true);
+  };
 
   const openDeleteModal = (rowData: any) => {
-    setModalData(rowData) // store the row data
-    setIsDeleteModalOpen(true)
-  }
+    setModalData(rowData); // store the row data
+    setIsDeleteModalOpen(true);
+  };
 
   const closeModals = () => {
-    setIsUpdateModalOpen(false)
-    setIsDeleteModalOpen(false)
-    setModalData(null)
-  }
+    setIsUpdateModalOpen(false);
+    setIsDeleteModalOpen(false);
+    setModalData(null);
+  };
 
-  const handleUpdateSubmit = async (event: React.FormEvent<HTMLFormElement>, data: any) => {
-    event.preventDefault()
+  const handleUpdateSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+    data: any
+  ) => {
+    event.preventDefault();
 
-    const identifier = modalData["customerId"]
-    const toastId = toast.loading("Updating member...")
+    const identifier = modalData["customerId"];
+    const toastId = toast.loading("Updating member...");
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/customers/${identifier}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_API_URL}/customers/${identifier}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (!response.ok) {
-        const { error } = await response.json()
-        throw new Error(error)
+        const { error } = await response.json();
+        throw new Error(error);
       }
 
-      toast.success("Member updated successfully")
-      closeModals()
-      onRefresh()
+      toast.success("Member updated successfully");
+      closeModals();
+      onRefresh();
     } catch (error) {
-      console.error("Failed to update member:", error)
-      toast.error(error instanceof Error ? error.message : "Update failed")
+      console.error("Failed to update member:", error);
+      toast.error(error instanceof Error ? error.message : "Update failed");
     } finally {
-      toast.dismiss(toastId)
+      toast.dismiss(toastId);
     }
-  }
+  };
 
   const handleDeleteConfirm = async () => {
-    const identifier = modalData["customerId"]
-    const toastId = toast.loading("Deleting member...")
+    const identifier = modalData["customerId"];
+    const toastId = toast.loading("Deleting member...");
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/customers/${identifier}`, {
-        method: "DELETE",
-      })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_API_URL}/customers/${identifier}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!response.ok) {
-        const { error } = await response.json()
-        throw new Error(error)
+        const { error } = await response.json();
+        throw new Error(error);
       }
 
-      toast.success("Member deleted successfully")
-      closeModals()
-      onRefresh()
+      toast.success("Member deleted successfully");
+      closeModals();
+      onRefresh();
     } catch (error) {
-      console.error("Failed to delete member:", error)
-      toast.error(error instanceof Error ? error.message : "Delete failed")
+      console.error("Failed to delete member:", error);
+      toast.error(error instanceof Error ? error.message : "Delete failed");
     } finally {
-      toast.dismiss(toastId)
+      toast.dismiss(toastId);
     }
-  }
+  };
 
   // Early return if tableData is empty
   if (!tableData || tableData.length === 0) {
-    return <p className="text-center text-lg mt-10">No members available</p>
+    return <p className="text-center text-lg mt-10">No members available</p>;
   }
 
   // Format dates and membership status
   const formatCellValue = (key: string, value: any) => {
-    if (value === undefined || value === null) return "-"
+    if (value === undefined || value === null) return "-";
 
-    if (key === "dateOfBirth" || key === "membershipStartDate" || key === "membershipEndDate") {
-      return value ? new Date(value).toLocaleDateString() : "-"
+    if (
+      key === "dateOfBirth" ||
+      key === "membershipStartDate" ||
+      key === "membershipEndDate"
+    ) {
+      return value ? new Date(value).toLocaleDateString() : "-";
     }
 
     if (key === "status") {
@@ -122,13 +139,13 @@ export default function CustomerTable({ tableData, rowOptions = [], onRefresh }:
             value === "ACTIVE"
               ? "bg-green-100 text-green-800"
               : value === "INACTIVE"
-                ? "bg-gray-100 text-gray-800"
-                : "bg-red-100 text-red-800"
+              ? "bg-gray-100 text-gray-800"
+              : "bg-red-100 text-red-800"
           }`}
         >
           {value}
         </span>
-      )
+      );
     }
 
     if (key === "membershipType") {
@@ -138,131 +155,139 @@ export default function CustomerTable({ tableData, rowOptions = [], onRefresh }:
             value === "BASIC"
               ? "bg-gray-100 text-gray-800"
               : value === "STANDARD"
-                ? "bg-blue-100 text-blue-800"
-                : value === "PREMIUM"
-                  ? "bg-purple-100 text-purple-800"
-                  : "bg-yellow-100 text-yellow-800"
+              ? "bg-blue-100 text-blue-800"
+              : value === "PREMIUM"
+              ? "bg-purple-100 text-purple-800"
+              : "bg-yellow-100 text-yellow-800"
           }`}
         >
           {value}
         </span>
-      )
+      );
     }
 
-    return value
-  }
+    return value;
+  };
 
-return (
-  <div className="relative overflow-x-auto max-w-full">
-    <table className="min-w-full bg-white border-collapse border border-slate-400">
-      <thead className="bg-gray-100">
-        <tr>
-          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-            ID Membre
-          </th>
-          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-            Nom
-          </th>
-          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-            Contact
-          </th>
-          
-          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-            Statut
-          </th>
-          <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[180px]">
-            Options
-          </th>
-        </tr>
-      </thead>
+  return (
+    <div className="relative overflow-x-auto max-w-full">
+      <table className="min-w-full bg-white border-collapse border border-slate-400">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+              ID Membre
+            </th>
+            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+              Nom
+            </th>
+            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+              Contact
+            </th>
 
-      <tbody className="bg-white divide-y divide-gray-200">
-        {tableData.map((row, index) => (
-          <tr
-            key={index}
-            onClick={() => setIsSelectedRow(index)}
-            className={isSelectedRow === index ? "bg-green-50" : ""}
-          >
-            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-              {row.customerId}
-            </td>
-            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-              {row.firstName} {row.lastName}
-            </td>
-            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              <div>{row.phoneNumber || "-"}</div>
-              <div className="text-xs">{row.email || "-"}</div>
-            </td>
-          
-            <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm">
-              {formatCellValue("status", row.status)}
-            </td>
-            <td className="border border-slate-300 px-6 py-4">
-              <div className="flex items-center justify-center gap-2">
-                {rowOptions.includes("UPDATE") && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      openUpdateModal(row)
-                    }}
-                    className="text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
-                  >
-                    Modifier
-                  </button>
-                )}
-
-                {rowOptions.includes("VIEW") && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      window.location.href = `/dashboard/clentDetail/${row.customerId}`
-                    }}
-                    className="text-white bg-purple-600 hover:bg-purple-700 font-medium rounded-lg text-sm px-2 py-1 text-center hover:underline flex items-center"
-                  >
-                    <ClipboardList className="w-3.5 h-3.5 mr-1" /> Visites
-                  </button>
-                )}
-
-                {rowOptions.includes("DELETE") && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      openDeleteModal(row)
-                    }}
-                    className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
-                  >
-                    Supprimer
-                  </button>
-                )}
-              </div>
-            </td>
+            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+              Statut
+            </th>
+            <th className="border border-slate-300 px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[180px]">
+              Options
+            </th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
 
-    {/* Delete confirmation modal */}
-    {isDeleteModalOpen && modalData && (
-      <DeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={closeModals}
-        onConfirm={handleDeleteConfirm}
-        // title="Supprimer le membre"
-        // message={`Êtes-vous sûr de vouloir supprimer ${modalData.firstName} ${modalData.lastName} ? Cela supprimera définitivement son compte et toutes les données associées.`}
-      />
-    )}
+        <tbody className="bg-white divide-y divide-gray-200">
+          {tableData.map((row, index) => (
+            <tr
+              key={index}
+              onClick={() => setIsSelectedRow(index)}
+              className={isSelectedRow === index ? "bg-green-50" : ""}
+            >
+              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                {row.customerId}
+              </td>
+              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                {row.firstName} {row.lastName}
+              </td>
+              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <div>{row.phoneNumber || "-"}</div>
+                <div className="text-xs">{row.email || "-"}</div>
+              </td>
 
-    {/* Update customer modal */}
-    {isUpdateModalOpen && modalData && (
-      <CustomerFormModal
-        mode={"update"}
-        isOpen={isUpdateModalOpen}
-        onClose={closeModals}
-        onSubmit={handleUpdateSubmit}
-        data={modalData}
-      />
-    )}
-  </div>
-)
+              <td className="border border-slate-300 px-6 py-4 whitespace-nowrap text-sm">
+                {formatCellValue("status", row.status)}
+              </td>
+              <td className="border border-slate-300 px-6 py-4">
+                <div className="flex items-center justify-center gap-2">
+                  {rowOptions.includes("UPDATE") && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openUpdateModal(row);
+                      }}
+                      className="text-white bg-yellow-600 hover:bg-yellow-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
+                    >
+                      Modifier
+                    </button>
+                  )}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Replace with attendance view route
+                      window.location.href = `/dashboard/clientPresence/${row.customerId}`;
+                    }}
+                    className="text-nowrap text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
+                  >
+                    attendance
+                  </button>
+                  {rowOptions.includes("VIEW") && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/dashboard/clentDetail/${row.customerId}`;
+                      }}
+                      className="text-white bg-purple-600 hover:bg-purple-700 font-medium rounded-lg text-sm px-2 py-1 text-center hover:underline flex items-center"
+                    >
+                      <ClipboardList className="w-3.5 h-3.5 mr-1" /> Visites
+                    </button>
+                  )}
 
+                  {rowOptions.includes("DELETE") && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openDeleteModal(row);
+                      }}
+                      className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
+                    >
+                      Supprimer
+                    </button>
+                  )}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Delete confirmation modal */}
+      {isDeleteModalOpen && modalData && (
+        <DeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={closeModals}
+          onConfirm={handleDeleteConfirm}
+          // title="Supprimer le membre"
+          // message={`Êtes-vous sûr de vouloir supprimer ${modalData.firstName} ${modalData.lastName} ? Cela supprimera définitivement son compte et toutes les données associées.`}
+        />
+      )}
+
+      {/* Update customer modal */}
+      {isUpdateModalOpen && modalData && (
+        <CustomerFormModal
+          mode={"update"}
+          isOpen={isUpdateModalOpen}
+          onClose={closeModals}
+          onSubmit={handleUpdateSubmit}
+          data={modalData}
+        />
+      )}
+    </div>
+  );
 }
