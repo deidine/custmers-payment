@@ -26,7 +26,7 @@ export async function getClientAttendance(clientId: number) {
       notes,
       created_at AS "createdAt",
       updated_at AS "updatedAt"
-    FROM public.patient_attendance
+    FROM public.customes_attendance
     WHERE customer_id = $1
     ORDER BY attendance_date DESC;
   `;
@@ -50,7 +50,7 @@ export async function getAttendanceById(attendanceId: number) {
       notes,
       created_at AS "createdAt",
       updated_at AS "updatedAt"
-    FROM public.patient_attendance
+    FROM public.customes_attendance
     WHERE attendance_id = $1;
   `;
   try {
@@ -66,7 +66,7 @@ export async function getAttendanceById(attendanceId: number) {
 export async function createAttendance(data: AttendanceCreateDTO) {
   const { clientId, attendanceDate, status, notes, poids } = data;
   const query = `
-    INSERT INTO public.patient_attendance (customer_id, attendance_date, status, notes,poids_now)
+    INSERT INTO public.customes_attendance (customer_id, attendance_date, status, notes,poids_now)
     VALUES ($1, $2, $3, $4, $5)
     RETURNING 
       attendance_id AS "attendanceId",
@@ -115,7 +115,7 @@ export async function updateAttendance(attendanceId: number, data: AttendanceUpd
   }
 
   const query = `
-    UPDATE public.patient_attendance
+    UPDATE public.customes_attendance
     SET ${updates.join(", ")}
     WHERE attendance_id = $${paramIndex}
     RETURNING 
@@ -141,7 +141,7 @@ export async function updateAttendance(attendanceId: number, data: AttendanceUpd
 // Delete an attendance record
 export async function deleteAttendance(attendanceId: number) {
   const query = `
-    DELETE FROM public.patient_attendance
+    DELETE FROM public.customes_attendance
     WHERE attendance_id = $1
     RETURNING 
       attendance_id AS "attendanceId",
