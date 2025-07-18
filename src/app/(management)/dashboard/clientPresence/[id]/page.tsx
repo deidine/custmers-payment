@@ -13,6 +13,7 @@ import { useUser } from "@/contexts/UserContext"
 import PaymentFormModal from "@/components/dashboard/payments/PaymentFormModal"
 import ClientDetailPage from "@/components/dashboard/payments/ClientDetailPage"
 import { formatDate } from "@/utils/helpers"
+import { CheckCircle, XCircle } from "lucide-react" // Import icons
 
 type TabType = "overview" | "attendance" | "payments" | "documents"
 
@@ -276,6 +277,37 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
     }
   }
 
+  // Function to check if customer paid this month
+  const hasCustomerPaidThisMonth = useCallback(() => {
+    if (!clientData || !clientData.priceToPay || !tableData || tableData.length === 0) {
+      return false
+    }
+
+    const requiredAmount = Number.parseFloat(clientData.priceToPay)
+    if (isNaN(requiredAmount) || requiredAmount <= 0) {
+      return false // Invalid priceToPay
+    }
+
+    const now = new Date()
+    const currentMonth = now.getMonth()
+    const currentYear = now.getFullYear()
+
+    for (const payment of tableData) {
+      const paymentDate = new Date(payment.paymentDate)
+      if (
+        paymentDate.getMonth() === currentMonth &&
+        paymentDate.getFullYear() === currentYear &&
+        payment.status === "COMPLETED" &&
+        Number.parseFloat(payment.amount) >= requiredAmount
+      ) {
+        return true // Found a qualifying payment
+      }
+    }
+    return false // No qualifying payment found
+  }, [clientData, tableData])
+
+  const paidThisMonth = hasCustomerPaidThisMonth()
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -288,7 +320,6 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
               <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full w-20 animate-pulse"></div>
             </div>
           </div>
-
           {/* Tabs Skeleton */}
           <div className="flex space-x-1 mb-8">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -298,7 +329,6 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
               ></div>
             ))}
           </div>
-
           {/* Content Skeleton */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div className="p-6 space-y-4">
@@ -404,15 +434,17 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                   </div>
                 </div>
               </div>
-
               <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-green-600">Status</p>
                     <div className="mt-2">{getStatusBadge(clientData.status)}</div>
-                       <span className="  text-sm">
-              Membre depuis {clientData.membershipStartDate ? formatDate(clientData.membershipStartDate) : formatDate(clientData.createdAt)}
-            </span>
+                    <span className="  text-sm">
+                      Membre depuis{" "}
+                      {clientData.membershipStartDate
+                        ? formatDate(clientData.membershipStartDate)
+                        : formatDate(clientData.createdAt)}
+                    </span>
                   </div>
                   <div className="p-3 bg-green-200 rounded-lg">
                     <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -426,7 +458,6 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                   </div>
                 </div>
               </div>
-
               <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
                 <div className="flex items-center justify-between">
                   <div>
@@ -445,12 +476,37 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                   </div>
                 </div>
               </div>
+              {/* New card for payment status */}
+              <div
+                className={`rounded-xl p-6 border ${
+                  paidThisMonth
+                    ? "bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200"
+                    : "bg-gradient-to-br from-red-50 to-red-100 border-red-200"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className={`text-sm font-medium ${paidThisMonth ? "text-emerald-600" : "text-red-600"}`}>
+                      Monthly Fee Status
+                    </p>
+                    <p className={`text-2xl font-bold ${paidThisMonth ? "text-emerald-900" : "text-red-900"}`}>
+                      {paidThisMonth ? "Paid" : "Not Paid"}
+                    </p>
+                    <span className="text-sm text-gray-600">Required: {clientData.priceToPay}</span>
+                  </div>
+                  <div className={`p-3 rounded-lg ${paidThisMonth ? "bg-emerald-200" : "bg-red-200"}`}>
+                    {paidThisMonth ? (
+                      <CheckCircle className="w-6 h-6 text-emerald-600" />
+                    ) : (
+                      <XCircle className="w-6 h-6 text-red-600" />
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
-
-               <ClientDetailPage client={clientData} customerId={Number(params.id)}/>
+            <ClientDetailPage client={clientData} customerId={Number(params.id)} />
           </div>
         )
-
       case "attendance":
         return (
           <div className="space-y-6">
@@ -466,6 +522,7 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                 Add Record
               </button>
             </div>
+            {JSON.stringify(attendanceData)}
             <DailyPatientAttendanceTable
               clientData={clientData}
               attendanceData={attendanceData}
@@ -482,7 +539,6 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
             />
           </div>
         )
-
       case "payments":
         return (
           <div className="space-y-6">
@@ -501,7 +557,6 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
             <PaymentTable tableData={tableData} onRefresh={fetchTableData} rowOptions={rowOptions} />
           </div>
         )
-
       case "documents":
         return (
           <div className="space-y-6">
@@ -523,7 +578,6 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                 {loading ? "Generating..." : "Generate PDF"}
               </button>
             </div>
-
             {pdfBase64 ? (
               <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                 <IFrameCompoent pdfBase64={pdfBase64} pdfName={"client"} />
@@ -549,7 +603,6 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
             )}
           </div>
         )
-
       default:
         return null
     }
@@ -572,7 +625,6 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
             </div>
           </div>
         </div>
-
         {/* Tabs Navigation */}
         <div className="mb-8">
           <div className="border-b border-gray-200 bg-white rounded-t-2xl">
@@ -603,12 +655,10 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
             </nav>
           </div>
         </div>
-
         {/* Tab Content */}
         <div className="bg-white rounded-b-2xl rounded-t-none shadow-xl border border-gray-100 border-t-0">
           <div className="p-6">{renderTabContent()}</div>
         </div>
-
         {/* Modals */}
         {isCreateModalOpen && (
           <PaymentFormModal
