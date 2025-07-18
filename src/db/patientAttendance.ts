@@ -24,6 +24,7 @@ export async function getClientAttendance(clientId: number) {
       attendance_date AS "date",
       status,
       notes,
+      poids_now,
       created_at AS "createdAt",
       updated_at AS "updatedAt"
     FROM public.customes_attendance

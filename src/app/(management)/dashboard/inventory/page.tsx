@@ -5,6 +5,7 @@ import type React from "react"
 import { useState, useEffect, useTransition } from "react"
  import { ProductRow } from "@/types/product"
 import { createProductAction, deleteProductAction, getProductsAction, updateProductAction } from "@/db/products"
+import DashboardLayout from "@/components/dashboard/DashboardLayout"
  
 export default function InventoryPage() {
   const [products, setProducts] = useState<ProductRow[]>([])
@@ -89,6 +90,8 @@ export default function InventoryPage() {
   const totalPages = Math.ceil(totalProducts / productsPerPage)
 
   return (
+            <DashboardLayout title={"inventory"} activeSlug={"inventory"}>
+    
     <div className="min-h-screen bg-gray-100 p-6 sm:p-8 lg:p-10">
       <header className="mb-8 flex justify-between items-center">
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">Gestion de l'Inventaire</h1>
@@ -295,5 +298,6 @@ export default function InventoryPage() {
         )}
       </div>
     </div>
+    </DashboardLayout>
   )
 }

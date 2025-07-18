@@ -43,6 +43,10 @@ export const dashboardSideItems = (
     id: DashboardCategoryEnum.REPORTS,
     title: "Reports",
     options: user?.role === "ADMIN"? [  "UPDATE", "DELETE", "CREATE", "VIEW"] : [ "VIEW"],
+  }, {
+    id: DashboardCategoryEnum.INVENTORY,
+    title: "inventory",
+    options: user?.role === "ADMIN"? [  "UPDATE", "DELETE", "CREATE", "VIEW"] : [ "VIEW"],
   },
 ];
 
@@ -77,5 +81,9 @@ export const dashboardSideItems2: DashboardCategory[] = [
     id: DashboardCategoryEnum.REPORTS,
     title: "Reports",
     options:  [  "UPDATE", "DELETE", "CREATE", "VIEW"]  ,
+  }, {
+    id: DashboardCategoryEnum.INVENTORY,
+    title: "inventory",
+    options:   [  "UPDATE", "DELETE", "CREATE", "VIEW"]  ,
   },
 ];
