@@ -13,10 +13,11 @@ import { useUser } from "@/contexts/UserContext"
 import PaymentFormModal from "@/components/dashboard/payments/PaymentFormModal"
 import ClientDetailPage from "@/components/dashboard/payments/ClientDetailPage"
 import { formatDate } from "@/utils/helpers"
-import { CheckCircle, XCircle, Scale } from "lucide-react" // Import icons 
+import { CheckCircle, XCircle, Scale, Download } from "lucide-react" // Import icons, in 
 import { Input } from "@/components/ui/input" // Import Input component
+import GymMembershipCard, { GymMembershipCardRef } from "@/components/GymMembershipCard"
 import WeightStatisticsChart, { WeightStatisticsChartRef } from "@/components/WeightStatisticsChart"
-
+ 
 type TabType = "overview" | "attendance" | "payments" | "documents" | "weight-stats"
 
 export default function ClientPresencePage({ params }: { params: { id: string } }) {
@@ -32,8 +33,7 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
   const [attendanceData, setAttendanceData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [pdfBase64, setPdfBase64] = useState<string | null>(null)
-
+ 
   // State for date range for weight statistics
   const [startDate, setStartDate] = useState<string>(() => {
     const d = new Date()
@@ -47,6 +47,8 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
 
   // Ref for the WeightStatisticsChart component
   const weightChartRef = useRef<WeightStatisticsChartRef>(null)
+  // Ref for the GymMembershipCard component
+  const gymCardRef = useRef<GymMembershipCardRef>(null)
 
   const tabs = [
     {
@@ -107,7 +109,7 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
           />
         </svg>
       ),
-      count: pdfBase64 ? 1 : 0,
+      count: 1,
     },
     {
       id: "weight-stats" as TabType,
@@ -116,30 +118,7 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
       count: attendanceData.length,
     },
   ]
-
-  const handleGenerateSinglePdf = async () => {
-    setLoading(true)
-    setPdfBase64(null)
-    setError(null)
-    try {
-      const id = Number.parseInt(params.id, 10)
-      if (isNaN(id)) {
-        throw new Error("Veuillez entrer un ID client valide.")
-      }
-      const result = await generateSubscriptionPdf(id)
-      if (result) {
-        setPdfBase64(result)
-        setActiveTab("documents") // Switch to documents tab when PDF is generated
-      } else {
-        setError("Impossible de générer le PDF. Vérifiez l'ID client ou si une souscription existe.")
-      }
-    } catch (err: any) {
-      setError(err.message || "Une erreur inattendue est survenue.")
-    } finally {
-      setLoading(false)
-    }
-  }
-
+ 
   // State for Add Attendance Modal
   const [isAddAttendanceModalOpen, setIsAddAttendanceModalOpen] = useState(false)
   const [selectedDateForAdd, setSelectedDateForAdd] = useState(new Date().toISOString().split("T")[0])
@@ -330,12 +309,21 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
 
   const paidThisMonth = hasCustomerPaidThisMonth()
 
-  // Handle PDF download
+  // Handle PDF download for Weight Statistics Chart
   const handleDownloadReportPdf = async () => {
     if (weightChartRef.current) {
       await weightChartRef.current.generatePdf()
     } else {
       toast.error("Chart component not ready for PDF generation.")
+    }
+  }
+
+  // Handle PDF download for Gym Membership Card
+  const handleDownloadCardPdf = async () => {
+    if (gymCardRef.current) {
+      await gymCardRef.current.generatePdf()
+    } else {
+      toast.error("Membership card component not ready for PDF generation.")
     }
   }
 
@@ -535,6 +523,7 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                 </div>
               </div>
             </div>
+
             <ClientDetailPage client={clientData} customerId={Number(params.id)} />
           </div>
         )
@@ -590,47 +579,20 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
       case "documents":
         return (
           <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">Documents & Reports</h3>
-              <button
-                onClick={handleGenerateSinglePdf}
-                disabled={loading}
-                className="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-                {loading ? "Generating..." : "Generate PDF"}
-              </button>
-            </div>
-            {pdfBase64 ? (
-              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                <IFrameCompoent pdfBase64={pdfBase64} pdfName={"client"} />
-              </div>
-            ) : (
-              <div className="bg-gray-50 rounded-xl p-12 text-center border-2 border-dashed border-gray-300">
-                <svg
-                  className="w-16 h-16 text-gray-400 mx-auto mb-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+            {/* New section for Gym Membership Card */}
+            <div className="mt-8">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold text-gray-900">Membership Card</h3>
+                <button
+                  onClick={handleDownloadCardPdf}
+                  className="download-button bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center gap-2"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Documents Available</h3>
-                <p className="text-gray-500 mb-4">Generate a PDF report to view documents for this client.</p>
+                  <Download className="w-4 h-4" />
+                  Download Card as PDF
+                </button>
               </div>
-            )}
+              <GymMembershipCard ref={gymCardRef} clientData={clientData} />
+            </div>
           </div>
         )
       case "weight-stats":
