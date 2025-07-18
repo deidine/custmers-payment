@@ -9,53 +9,81 @@ import { getFilteredCustomers } from "@/db/payment";
 
 export async function POST(request: NextRequest) {
   try {
-    const data = (await request.json()) as any;
-      // Check if phone number already exists
-      const customer = await getCustomerByPhoneNumber(data.phoneNumber||"");
-      if (customer) {
-        return NextResponse.json(
-          { error: "Phone number already exists" },
-          { status: 400 }
-        );
-      } 
+    const formData = await request.formData()
 
-      const profilePictureFile =   data.profilePictureFile as any;
-      let profilePictureUrl: string | null = null;
+    const data: { [key: string]: any } = {}
+    let profilePictureFile: File | null = null
 
-      if (profilePictureFile && profilePictureFile.size > 0) {
-        const uploadDir = path.join(process.cwd(), "public", "uploads", "users", "profile_pictures");
-        await fs.mkdir(uploadDir, { recursive: true });
-
-        const fileExtension = path.extname(profilePictureFile.name);
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        const fileName = `profile-${uniqueSuffix}${fileExtension}`;
-        const filePath = path.join(uploadDir, fileName);
-
-        const arrayBuffer = await profilePictureFile.arrayBuffer();
-        await fs.writeFile(filePath, Buffer.from(arrayBuffer));
-
-        profilePictureUrl = `/uploads/users/profile_pictures/${fileName}`;
+    // Extract fields from FormData
+    for (const [key, value] of formData.entries()) {
+      if (key === "profilePictureFile" && value instanceof File) {
+        profilePictureFile = value
+      } else if (typeof value === "string") {
+        data[key] = value
       }
+      // Add more type handling if necessary for other fields (e.g., numbers, booleans)
+    }
 
-      data.profilePictureUrl = profilePictureUrl;
-    const response = await createCustomer(data);
+    // Check if phone number already exists
+    const customer = await getCustomerByPhoneNumber(data.phoneNumber || "")
+    if (customer) {
+      return NextResponse.json({ error: "Phone number already exists" }, { status: 400 })
+    }
+
+    let profilePictureUrl: string | null = null
+    const existingProfilePictureUrl = formData.get("profilePictureUrl") as string | null
+
+    if (profilePictureFile && profilePictureFile.size > 0) {
+      const uploadDir = path.join(process.cwd(), "public", "uploads", "users", "profile_pictures")
+      await fs.mkdir(uploadDir, { recursive: true }) // Ensure directory exists
+
+      const fileExtension = path.extname(profilePictureFile.name)
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+      const fileName = `profile-${uniqueSuffix}${fileExtension}`
+      const filePath = path.join(uploadDir, fileName)
+
+      const arrayBuffer = await profilePictureFile.arrayBuffer()
+      await fs.writeFile(filePath, Buffer.from(arrayBuffer))
+
+      profilePictureUrl = `/uploads/users/profile_pictures/${fileName}` // Relative URL for public access
+    } else if (existingProfilePictureUrl) {
+      // No new file uploaded, retain existing URL
+      profilePictureUrl = existingProfilePictureUrl
+    }
+
+    // Construct CustomerCreateDTO from formData
+    const customerCreateDto: CustomerCreateDTO = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      gender: data.gender,
+      dateOfBirth: data.dateOfBirth,
+      email: data.email,
+      phoneNumber: data.phoneNumber,
+      emergencyPhone: data.emergencyPhone,
+      emergencyContact: data.emergencyContact,
+      streetAddress: data.streetAddress,
+      city: data.city,
+      state: data.state,
+      stateCode: data.stateCode,
+      membershipType: data.membershipType,
+      status: data.status,
+      membershipStartDate: data.membershipStartDate,
+      membershipEndDate: data.membershipEndDate,
+      priceToPay: Number.parseFloat(data.priceToPay), // Convert to number
+      notes: data.notes,
+      profilePictureUrl: profilePictureUrl, // This is the key that will be used
+    }
+
+    const response = await createCustomer(customerCreateDto) // Pass the DTO
+
     if (response) {
-      return NextResponse.json(
-        { message: "Customer created successfully" },
-        { status: 201 }
-      );
+      return NextResponse.json({ message: "Customer created successfully" }, { status: 201 })
     } else {
-      return NextResponse.json(
-        { error: "Customer not created due to conflict or constraint" },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: "Customer not created due to conflict or constraint" }, { status: 409 })
     }
   } catch (error) {
-    console.error("Error creating customer:", error);
-    return NextResponse.json(
-      { error: "Error creating customer", details: formatError(error) },
-      { status: 500 }
-    );
+    console.error("Error creating customer:", error)
+    return NextResponse.json({ error: "Error creating customer", details: formatError(error) }, { status: 500 })
   }
 }
 
