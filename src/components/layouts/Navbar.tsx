@@ -47,7 +47,14 @@ export default function Navbar() {
               Dashboard
             </Link>
           )}
- 
+    {isAllowed && (
+            <Link
+              href={"/dashboard/clients"}
+              className="bg-yellow-800 px-2 py-1 rounded text-white hover:bg-yellow-500 block"
+            >
+              Clients
+            </Link>
+          )}
         </div>
       </div>
     </nav>

@@ -1,6 +1,6 @@
 "use client"
 import type React from "react"
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react" // Import useRef
 import toast from "react-hot-toast"
 import { AttendanceStatus } from "@/types/customer"
 import DailyPatientAttendanceTable from "@/components/patientAttendance/DailyPatientAttendanceTable"
@@ -13,9 +13,11 @@ import { useUser } from "@/contexts/UserContext"
 import PaymentFormModal from "@/components/dashboard/payments/PaymentFormModal"
 import ClientDetailPage from "@/components/dashboard/payments/ClientDetailPage"
 import { formatDate } from "@/utils/helpers"
-import { CheckCircle, XCircle } from "lucide-react" // Import icons
+import { CheckCircle, XCircle, Scale } from "lucide-react" // Import icons 
+import { Input } from "@/components/ui/input" // Import Input component
+import WeightStatisticsChart, { WeightStatisticsChartRef } from "@/components/WeightStatisticsChart"
 
-type TabType = "overview" | "attendance" | "payments" | "documents"
+type TabType = "overview" | "attendance" | "payments" | "documents" | "weight-stats"
 
 export default function ClientPresencePage({ params }: { params: { id: string } }) {
   const clientId = params.id ? Number.parseInt(params.id as string, 10) : null
@@ -31,6 +33,20 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [pdfBase64, setPdfBase64] = useState<string | null>(null)
+
+  // State for date range for weight statistics
+  const [startDate, setStartDate] = useState<string>(() => {
+    const d = new Date()
+    d.setDate(1) // First day of current month
+    return d.toISOString().split("T")[0]
+  })
+  const [endDate, setEndDate] = useState<string>(() => {
+    const d = new Date()
+    return d.toISOString().split("T")[0] // Current date
+  })
+
+  // Ref for the WeightStatisticsChart component
+  const weightChartRef = useRef<WeightStatisticsChartRef>(null)
 
   const tabs = [
     {
@@ -92,6 +108,12 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
         </svg>
       ),
       count: pdfBase64 ? 1 : 0,
+    },
+    {
+      id: "weight-stats" as TabType,
+      name: "Weight Stats",
+      icon: <Scale className="w-5 h-5" />,
+      count: attendanceData.length,
     },
   ]
 
@@ -308,6 +330,15 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
 
   const paidThisMonth = hasCustomerPaidThisMonth()
 
+  // Handle PDF download
+  const handleDownloadReportPdf = async () => {
+    if (weightChartRef.current) {
+      await weightChartRef.current.generatePdf()
+    } else {
+      toast.error("Chart component not ready for PDF generation.")
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -522,7 +553,6 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                 Add Record
               </button>
             </div>
-            {JSON.stringify(attendanceData)}
             <DailyPatientAttendanceTable
               clientData={clientData}
               attendanceData={attendanceData}
@@ -601,6 +631,57 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                 <p className="text-gray-500 mb-4">Generate a PDF report to view documents for this client.</p>
               </div>
             )}
+          </div>
+        )
+      case "weight-stats":
+        return (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Weight Advancement Chart</h3>
+              <div className="flex items-center gap-2">
+                <label htmlFor="start-date" className="sr-only">
+                  Start Date
+                </label>
+                <Input
+                  id="start-date"
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-auto"
+                />
+                <span className="text-gray-500">-</span>
+                <label htmlFor="end-date" className="sr-only">
+                  End Date
+                </label>
+                <Input
+                  id="end-date"
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="w-auto"
+                />
+                <button
+                  onClick={handleDownloadReportPdf} // Changed to download function
+                  className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  Download Report as PDF
+                </button>
+              </div>
+            </div>
+            <WeightStatisticsChart
+              ref={weightChartRef}
+              attendanceData={attendanceData}
+              startDate={startDate}
+              endDate={endDate}
+            />
           </div>
         )
       default:
