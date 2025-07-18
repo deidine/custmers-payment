@@ -50,6 +50,15 @@ export function getValidatedImageSrc(
 //   return totalSize; // Dung lượng tính bằng byte
 // }
 
+export   const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  }
+
+
 export function calculateAge(dateString: string | Date) {
   const birthDate = new Date(dateString);
   const today = new Date();

@@ -201,7 +201,7 @@ return (
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
-                      window.location.href = `/dashboard/clentDetail/${row.customerId}`
+                      window.location.href = `/dashboard/clientPresence/${row.customerId}`
                     }}
                     className="text-white bg-purple-600 hover:bg-purple-700 font-medium rounded-lg text-sm px-2 py-1 text-center hover:underline flex items-center"
                   >
