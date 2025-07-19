@@ -96,6 +96,7 @@ export default function ClientDetailPage({ customerId ,client}: ClientDetailPage
       { (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Personal Information */}
+          
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-gray-50 rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-4">Informations personnelles</h3>
@@ -122,7 +123,6 @@ export default function ClientDetailPage({ customerId ,client}: ClientDetailPage
               </div>
             </div>
           </div>
-
           {/* Adresse */}
           <div className="bg-gray-50 rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-4">Adresse</h3>

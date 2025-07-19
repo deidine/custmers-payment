@@ -53,7 +53,7 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
   const tabs = [
     {
       id: "overview" as TabType,
-      name: "Overview",
+      name: "Information du client",
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -68,7 +68,7 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
     },
     {
       id: "attendance" as TabType,
-      name: "Attendance",
+      name: "Présence",
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -113,7 +113,7 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
     },
     {
       id: "weight-stats" as TabType,
-      name: "Weight Stats",
+      name: "Statistiques de poids",
       icon: <Scale className="w-5 h-5" />,
       count: attendanceData.length,
     },
@@ -420,8 +420,7 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
             </div>
             <div className="p-6">
               <p className="text-gray-700 text-base leading-relaxed">
-                The requested client information could not be found. Please check the client ID and try again.
-              </p>
+Les informations client demandées n'ont pas pu être trouvées. Veuillez vérifier l'ID du client et réessayer.              </p>
             </div>
           </div>
         </div>
@@ -480,7 +479,7 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
               <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-purple-600">Total Records</p>
+                    <p className="text-sm font-medium text-purple-600">Total des enregistrements</p>
                     <p className="text-2xl font-bold text-purple-900">{attendanceData.length + tableData.length}</p>
                   </div>
                   <div className="p-3 bg-purple-200 rounded-lg">
@@ -506,12 +505,12 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                 <div className="flex items-center justify-between">
                   <div>
                     <p className={`text-sm font-medium ${paidThisMonth ? "text-emerald-600" : "text-red-600"}`}>
-                      Monthly Fee Status
+                     État des frais mensuels
                     </p>
                     <p className={`text-2xl font-bold ${paidThisMonth ? "text-emerald-900" : "text-red-900"}`}>
-                      {paidThisMonth ? "Paid" : "Not Paid"}
+                      {paidThisMonth ? "payé" : "No payé"}
                     </p>
-                    <span className="text-sm text-gray-600">Required: {clientData.priceToPay}</span>
+                    <span className="text-sm text-gray-600">Montant du mois: {clientData.priceToPay}</span>
                   </div>
                   <div className={`p-3 rounded-lg ${paidThisMonth ? "bg-emerald-200" : "bg-red-200"}`}>
                     {paidThisMonth ? (
@@ -522,7 +521,13 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                   </div>
                 </div>
               </div>
+              <div className="flex justify-end">
+
+<img src={`${process.env.NEXT_PUBLIC_BASE_URL}${clientData.profilePictureUrl || ""}`} alt="Gym silhouettes" className="h-40 w-40 object-contain object-bottom opacity-80 mb-6" />
+              </div>
+
             </div>
+               
 
             <ClientDetailPage client={clientData} customerId={Number(params.id)} />
           </div>
@@ -539,7 +544,7 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Add Record
+                Ajouter un enregistrement
               </button>
             </div>
             <DailyPatientAttendanceTable
@@ -570,7 +575,7 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Add Payment
+                Ajouter un paiement
               </button>
             </div>
             <PaymentTable tableData={tableData} onRefresh={fetchTableData} rowOptions={rowOptions} />
@@ -582,13 +587,13 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
             {/* New section for Gym Membership Card */}
             <div className="mt-8">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold text-gray-900">Membership Card</h3>
+                <h3 className="text-xl font-semibold text-gray-900">Carte de membre</h3>
                 <button
                   onClick={handleDownloadCardPdf}
                   className="download-button bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center gap-2"
                 >
                   <Download className="w-4 h-4" />
-                  Download Card as PDF
+                  Télécharger en PDF
                 </button>
               </div>
               <GymMembershipCard ref={gymCardRef} clientData={clientData} />
@@ -599,10 +604,10 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
         return (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Weight Advancement Chart</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Tableau d'avancement du poids</h3>
               <div className="flex items-center gap-2">
                 <label htmlFor="start-date" className="sr-only">
-                  Start Date
+                  Date de début
                 </label>
                 <Input
                   id="start-date"
@@ -613,7 +618,7 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                 />
                 <span className="text-gray-500">-</span>
                 <label htmlFor="end-date" className="sr-only">
-                  End Date
+                  Date de fin
                 </label>
                 <Input
                   id="end-date"
@@ -634,7 +639,8 @@ export default function ClientPresencePage({ params }: { params: { id: string } 
                       d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                     />
                   </svg>
-                  Download Report as PDF
+                                    Télécharger en PDF
+
                 </button>
               </div>
             </div>

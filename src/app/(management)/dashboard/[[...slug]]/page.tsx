@@ -15,8 +15,7 @@ const dashboardComponents: Partial<
   [DashboardCategoryEnum.NOPAYEDCUSTOMERS]: NoPayedCustomerDashboard, 
   [DashboardCategoryEnum.USERS]:  UserDashboard,
   [DashboardCategoryEnum.PAYMENTS]:  PaymentDashboard,
-  [DashboardCategoryEnum.ATTENDANCE]: () => <div>Attendance</div>,
-  [DashboardCategoryEnum.REPORTS]: () => <div>Reports</div>,
+  [DashboardCategoryEnum.ATTENDANCE]: () => <div>Attendance</div>, 
 };
 
 export default function DashboardPage({

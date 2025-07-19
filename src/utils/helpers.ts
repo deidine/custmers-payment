@@ -51,7 +51,7 @@ export function getValidatedImageSrc(
 // }
 
 export   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('fr-Fr', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'

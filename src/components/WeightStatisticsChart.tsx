@@ -43,7 +43,7 @@ const WeightStatisticsChart = forwardRef<WeightStatisticsChartRef, WeightStatist
     // Format data for the chart, ensuring unique dates if multiple entries exist for a day
     const chartData = sortedData.map((item) => ({
       date: formatDate(item.date), // Format date for display on X-axis
-      weight: item.poids_now,
+      poids: item.poids_now,
     }))
 
     useImperativeHandle(ref, () => ({
@@ -70,7 +70,7 @@ const WeightStatisticsChart = forwardRef<WeightStatisticsChartRef, WeightStatist
 
           // Add title
           pdf.setFontSize(18)
-          pdf.text("Client Weight Advancement Report", 10, position)
+          pdf.text("Rapport d'Avancement du Poids du Client", 10, position)
           position += 10
 
           // Add date range
@@ -123,7 +123,7 @@ const WeightStatisticsChart = forwardRef<WeightStatisticsChartRef, WeightStatist
               />
               <Line
                 type="monotone"
-                dataKey="weight"
+                dataKey="poids"
                 stroke="#4f46e5" // A nice purple/indigo
                 strokeWidth={2}
                 dot={{ stroke: "#4f46e5", strokeWidth: 2, r: 4 }}
@@ -138,7 +138,7 @@ const WeightStatisticsChart = forwardRef<WeightStatisticsChartRef, WeightStatist
           </ResponsiveContainer>
         ) : (
           <div className="flex items-center justify-center h-full text-gray-500">
-            No weight data available for the selected date range.
+            Aucune donnée de poids disponible pour la plage de dates sélectionnée.
           </div>
         )}
       </div>

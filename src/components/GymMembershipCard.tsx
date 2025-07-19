@@ -115,31 +115,31 @@ const GymMembershipCard = forwardRef<GymMembershipCardRef, GymMembershipCardProp
       {/* Front of the card */}
       <div className="relative p-6 flex flex-col items-center text-center z-10">
         <Dumbbell className="w-16 h-16 text-white mb-4" />
-        <h2 className="text-3xl font-bold uppercase tracking-wider mb-2">Gym Membership</h2>
+        <h2 className="text-3xl font-bold uppercase tracking-wider mb-2">{process.env.COMPANYNAME}</h2>
         <p className="text-lg font-semibold text-gray-300 mb-6">{clientData.membershipType || "Standard"}</p>
 
         {/* Gym silhouettes placeholder */}
      <img
           src={`${process.env.NEXT_PUBLIC_BASE_URL}${clientData.profilePictureUrl || ""}`}
           alt="Gym silhouettes"
-          className="w-full  h-48 object-cover object-bottom opacity-80 mb-6"
+          className="w-full  h-48 object-contain object-bottom opacity-80 mb-6"
         />
 
         <div className="w-full text-left space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-400">Member Name:</span>
+            <span className="text-sm text-gray-400">Nom / prénom:</span>
             <span className="text-lg font-semibold">{fullName || "N/A"}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-400">Membership ID:</span>
+            <span className="text-sm text-gray-400">ID:</span>
             <span className="text-lg font-semibold">{clientData.customerId || "N/A"}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-400">Start Date:</span>
+            <span className="text-sm text-gray-400">Date de début:</span>
             <span className="text-lg font-semibold">{membershipStart}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-400">End Date:</span>
+            <span className="text-sm text-gray-400">Date de fin:</span>
             <span className="text-lg font-semibold">{membershipEnd}</span>
           </div>
         </div>
