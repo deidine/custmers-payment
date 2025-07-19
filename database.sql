@@ -1,80 +1,169 @@
- 
-CREATE TABLE
-  IF NOT EXISTS users (
-    user_id SERIAL PRIMARY KEY,
-    uuid UUID DEFAULT gen_random_uuid() UNIQUE,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(200) NOT NULL,
-    role VARCHAR(20) DEFAULT 'CUSTOMER', -- ADMIN, MANAGER, STAFF, CUSTOMER
-    is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  );
+-- Database: paymnet
 
-CREATE INDEX IF NOT EXISTS idx_users_uuid ON users (uuid);
+-- DROP DATABASE IF EXISTS paymnet;
 
--- ALTER TABLE users ALTER COLUMN role SET DEFAULT 'CUSTOMER';
+CREATE DATABASE paymnet
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'C'
+    LC_CTYPE = 'C'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
 
-CREATE TABLE sessions (
-  id SERIAL PRIMARY KEY,
-  uuid UUID DEFAULT gen_random_uuid() UNIQUE,
-  user_uuid UUID NOT NULL,
-  token TEXT NOT NULL,
-  expires_at TIMESTAMP NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_sessions_user_uuid FOREIGN KEY (user_uuid) REFERENCES users(uuid) ON DELETE CASCADE
-);
 
-CREATE INDEX idx_sessions_token ON sessions (token);
-CREATE INDEX idx_sessions_user_uuid ON sessions (user_uuid);
 
-CREATE TABLE IF NOT EXISTS user_profiles (
-  profile_id SERIAL PRIMARY KEY,
-  user_uuid UUID REFERENCES users(uuid) ON DELETE CASCADE,
-  full_name VARCHAR(100),
-  birth_date DATE,
-  address TEXT,
-  phone_number VARCHAR(20),
-  profile_picture_url VARCHAR(255),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
-CREATE INDEX idx_user_profiles_user_uuid ON user_profiles (user_uuid);
- 
 
-CREATE TABLE
-  IF NOT EXISTS customers (
-    customer_id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
 
-  uuid UUID DEFAULT gen_random_uuid() UNIQUE,
-phone_number VARCHAR(20) NOT NULL,
-    email VARCHAR(50),
-    address VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  );
 
-ALTER TABLE customers
-ADD CONSTRAINT unique_phone_number UNIQUE (phone_number);
- ALTER TABLE customers
-  ADD COLUMN first_name VARCHAR(50) NOT NULL,
-  ADD COLUMN last_name VARCHAR(50) NOT NULL,
-  ADD COLUMN gender VARCHAR(10), -- consider using an ENUM if applicable
-  ADD COLUMN date_of_birth DATE,
-  ADD COLUMN emergency_contact VARCHAR(50),
-  ADD COLUMN emergency_phone VARCHAR(20),
-  ADD COLUMN street_address VARCHAR(255),
-  ADD COLUMN city VARCHAR(100),
-  ADD COLUMN state VARCHAR(100),
-  ADD COLUMN state_code VARCHAR(10),
-  ADD COLUMN membership_type VARCHAR(50) NOT NULL, -- or use ENUM
-  ADD COLUMN membership_start_date DATE,
-  ADD COLUMN membership_end_date DATE,
-  ADD COLUMN status VARCHAR(50) NOT NULL, -- or use ENUM
-  ADD COLUMN notes TEXT;
+
+-- Table: public.attendance
+
+-- DROP TABLE IF EXISTS public.attendance;
+
+CREATE TABLE IF NOT EXISTS public.attendance
+(
+    attendance_id integer NOT NULL DEFAULT nextval('user_attendance_id_seq'::regclass),
+    user_id integer NOT NULL,
+    date date NOT NULL,
+    status character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    check_in_time timestamp without time zone,
+    check_out_time timestamp without time zone,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT attendance_pkey PRIMARY KEY (attendance_id),
+    CONSTRAINT attendance_user_id_date_key UNIQUE (user_id, date),
+    CONSTRAINT attendance_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public.users (user_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT attendance_status_check CHECK (status::text = ANY (ARRAY['PRESENT'::character varying::text, 'ABSENT'::character varying::text, 'ON_LEAVE'::character varying::text]))
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.attendance
+    OWNER to postgres;
+-- Index: idx_attendance_date
+
+-- DROP INDEX IF EXISTS public.idx_attendance_date;
+
+CREATE INDEX IF NOT EXISTS idx_attendance_date
+    ON public.attendance USING btree
+    (date ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: idx_attendance_user_id
+
+-- DROP INDEX IF EXISTS public.idx_attendance_user_id;
+
+CREATE INDEX IF NOT EXISTS idx_attendance_user_id
+    ON public.attendance USING btree
+    (user_id ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+
+
+
+
+-- Table: public.customers
+
+-- DROP TABLE IF EXISTS public.customers;
+
+CREATE TABLE IF NOT EXISTS public.customers
+(
+    customer_id integer NOT NULL DEFAULT nextval('customers_customer_id_seq'::regclass),
+    uuid uuid DEFAULT gen_random_uuid(),
+    phone_number character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    email character varying(50) COLLATE pg_catalog."default",
+    address character varying(255) COLLATE pg_catalog."default",
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    first_name character varying(50) COLLATE pg_catalog."default",
+    last_name character varying(50) COLLATE pg_catalog."default",
+    gender character varying(10) COLLATE pg_catalog."default",
+    date_of_birth date,
+    emergency_contact character varying(50) COLLATE pg_catalog."default",
+    emergency_phone character varying(20) COLLATE pg_catalog."default",
+    street_address character varying(255) COLLATE pg_catalog."default",
+    city character varying(100) COLLATE pg_catalog."default",
+    state character varying(100) COLLATE pg_catalog."default",
+    state_code character varying(10) COLLATE pg_catalog."default",
+    membership_type character varying(50) COLLATE pg_catalog."default",
+    membership_start_date date,
+    membership_end_date date,
+    status character varying(50) COLLATE pg_catalog."default",
+    notes text COLLATE pg_catalog."default",
+    price_to_pay bigint,
+    profile_picture_url character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT customers_pkey PRIMARY KEY (customer_id),
+    CONSTRAINT customers_uuid_key UNIQUE (uuid),
+    CONSTRAINT unique_phone_number UNIQUE (phone_number)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.customers
+    OWNER to postgres;
+
+
+
+
+
+
+
+
+  
+  -- Table: public.customes_attendance
+
+-- DROP TABLE IF EXISTS public.customes_attendance;
+
+CREATE TABLE IF NOT EXISTS public.customes_attendance
+(
+    attendance_id integer NOT NULL DEFAULT nextval('user_attendance_id_seq'::regclass),
+    customer_id integer NOT NULL,
+    attendance_date date NOT NULL,
+    status character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    notes text COLLATE pg_catalog."default",
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    poids_now double precision,
+    CONSTRAINT customes_attendance_pkey PRIMARY KEY (attendance_id),
+    CONSTRAINT fk_client FOREIGN KEY (customer_id)
+        REFERENCES public.customers (customer_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT customes_attendance_status_check CHECK (status::text = ANY (ARRAY['PRESENT'::character varying::text, 'ABSENT'::character varying::text, 'CANCELLED'::character varying::text, 'RESCHEDULED'::character varying::text]))
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.customes_attendance
+    OWNER to postgres;
+-- Index: idx_customes_attendance_customer_id
+
+-- DROP INDEX IF EXISTS public.idx_customes_attendance_customer_id;
+
+CREATE INDEX IF NOT EXISTS idx_customes_attendance_customer_id
+    ON public.customes_attendance USING btree
+    (customer_id ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: idx_customes_attendance_date
+
+-- DROP INDEX IF EXISTS public.idx_customes_attendance_date;
+
+CREATE INDEX IF NOT EXISTS idx_customes_attendance_date
+    ON public.customes_attendance USING btree
+    (attendance_date ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+
+
+
+
 -- Table: public.payments
 
 -- DROP TABLE IF EXISTS public.payments;
@@ -82,63 +171,226 @@ ADD CONSTRAINT unique_phone_number UNIQUE (phone_number);
 CREATE TABLE IF NOT EXISTS public.payments
 (
     payment_id integer NOT NULL DEFAULT nextval('payments_payment_id_seq'::regclass),
-    customer_uuid uuid,
     payment_method character varying(20) COLLATE pg_catalog."default" DEFAULT 'Cash'::character varying,
     total_amount numeric(10,2) NOT NULL DEFAULT 0,
     payment_date timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     customer_id integer,
     amount numeric(10,2),
-    payment_type character varying(20) COLLATE pg_catalog."default",
     status character varying(20) COLLATE pg_catalog."default",
     notes text COLLATE pg_catalog."default",
     receipt_number character varying(50) COLLATE pg_catalog."default",
     invoice_number character varying(50) COLLATE pg_catalog."default",
     transaction_reference character varying(100) COLLATE pg_catalog."default",
     created_by integer,
-    CONSTRAINT payments_pkey PRIMARY KEY (payment_id),
-    CONSTRAINT fk_payments_customer_uuid FOREIGN KEY (customer_uuid)
-        REFERENCES public.customers (uuid) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE
+    CONSTRAINT payments_pkey PRIMARY KEY (payment_id)
 )
 
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.payments
     OWNER to postgres;
--- Index: idx_payments_customer_uuid
 
--- DROP INDEX IF EXISTS public.idx_payments_customer_uuid;
 
-CREATE INDEX IF NOT EXISTS idx_payments_customer_uuid
-    ON public.payments USING btree
-    (customer_uuid ASC NULLS LAST)
+
+
+
+
+
+
+  -- Table: public.products
+
+-- DROP TABLE IF EXISTS public.products;
+
+CREATE TABLE IF NOT EXISTS public.products
+(
+    id integer NOT NULL DEFAULT nextval('products_id_seq'::regclass),
+    name text COLLATE pg_catalog."default" NOT NULL,
+    description text COLLATE pg_catalog."default",
+    price numeric(10,2) NOT NULL,
+    stock_quantity integer NOT NULL DEFAULT 0,
+    category text COLLATE pg_catalog."default",
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    CONSTRAINT products_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.products
+    OWNER to postgres;
+
+
+
+
+
+
+  -- Table: public.sessions
+
+-- DROP TABLE IF EXISTS public.sessions;
+
+CREATE TABLE IF NOT EXISTS public.sessions
+(
+    id integer NOT NULL DEFAULT nextval('sessions_id_seq'::regclass),
+    uuid uuid DEFAULT gen_random_uuid(),
+    user_uuid uuid NOT NULL,
+    token text COLLATE pg_catalog."default" NOT NULL,
+    expires_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT sessions_pkey PRIMARY KEY (id),
+    CONSTRAINT sessions_uuid_key UNIQUE (uuid),
+    CONSTRAINT fk_sessions_user_uuid FOREIGN KEY (user_uuid)
+        REFERENCES public.users (uuid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.sessions
+    OWNER to postgres;
+-- Index: idx_sessions_token
+
+-- DROP INDEX IF EXISTS public.idx_sessions_token;
+
+CREATE INDEX IF NOT EXISTS idx_sessions_token
+    ON public.sessions USING btree
+    (token COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: idx_sessions_user_uuid
+
+-- DROP INDEX IF EXISTS public.idx_sessions_user_uuid;
+
+CREATE INDEX IF NOT EXISTS idx_sessions_user_uuid
+    ON public.sessions USING btree
+    (user_uuid ASC NULLS LAST)
     TABLESPACE pg_default;
 
-    
-CREATE INDEX idx_payments_customer_uuid ON payments (customer_uuid);
- 
-CREATE VIEW vw_users_with_uuid AS
-SELECT uuid, username, password, role, is_enabled, created_at, updated_at
-FROM users;
 
-CREATE VIEW vw_user_profiles_view AS
-SELECT 
-  up.profile_id, 
-  up.user_uuid, 
-  up.full_name, 
-  up.birth_date, 
-  up.address, 
-  up.phone_number, 
-  up.profile_picture_url, 
-  up.created_at, 
-  up.updated_at, 
-  u.username,
-  u.role
-FROM user_profiles up
-JOIN users u ON up.user_uuid = u.uuid;
- 
-SELECT * FROM "information_schema"."views" 
-WHERE "table_schema" = 'public';
+
+
+
+  -- Table: public.user_profiles
+
+-- DROP TABLE IF EXISTS public.user_profiles;
+
+CREATE TABLE IF NOT EXISTS public.user_profiles
+(
+    profile_id integer NOT NULL DEFAULT nextval('user_profiles_profile_id_seq'::regclass),
+    user_uuid uuid,
+    full_name character varying(100) COLLATE pg_catalog."default",
+    birth_date date,
+    address text COLLATE pg_catalog."default",
+    phone_number character varying(20) COLLATE pg_catalog."default",
+    profile_picture_url character varying(255) COLLATE pg_catalog."default",
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT user_profiles_pkey PRIMARY KEY (profile_id),
+    CONSTRAINT user_profiles_user_uuid_fkey FOREIGN KEY (user_uuid)
+        REFERENCES public.users (uuid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.user_profiles
+    OWNER to postgres;
+-- Index: idx_user_profiles_user_uuid
+
+-- DROP INDEX IF EXISTS public.idx_user_profiles_user_uuid;
+
+CREATE INDEX IF NOT EXISTS idx_user_profiles_user_uuid
+    ON public.user_profiles USING btree
+    (user_uuid ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+
+
+
+-- Table: public.users
+
+-- DROP TABLE IF EXISTS public.users;
+
+CREATE TABLE IF NOT EXISTS public.users
+(
+    user_id integer NOT NULL DEFAULT nextval('users_user_id_seq'::regclass),
+    uuid uuid DEFAULT gen_random_uuid(),
+    username character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    password character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    role character varying(20) COLLATE pg_catalog."default" DEFAULT 'CUSTOMER'::character varying,
+    is_enabled boolean NOT NULL DEFAULT true,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT users_pkey PRIMARY KEY (user_id),
+    CONSTRAINT users_username_key UNIQUE (username),
+    CONSTRAINT users_uuid_key UNIQUE (uuid)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.users
+    OWNER to postgres;
+-- Index: idx_users_uuid
+
+-- DROP INDEX IF EXISTS public.idx_users_uuid;
+
+CREATE INDEX IF NOT EXISTS idx_users_uuid
+    ON public.users USING btree
+    (uuid ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+
+
+
+
+
+-- View: public.vw_user_profiles_view
+
+-- DROP VIEW public.vw_user_profiles_view;
+
+CREATE OR REPLACE VIEW public.vw_user_profiles_view
+ AS
+ SELECT up.profile_id,
+    up.user_uuid,
+    up.full_name,
+    up.birth_date,
+    up.address,
+    up.phone_number,
+    up.profile_picture_url,
+    up.created_at,
+    up.updated_at,
+    u.username,
+    u.role
+   FROM user_profiles up
+     JOIN users u ON up.user_uuid = u.uuid;
+
+ALTER TABLE public.vw_user_profiles_view
+    OWNER TO postgres;
+
+
+
+
+-- View: public.vw_users_with_uuid
+
+-- DROP VIEW public.vw_users_with_uuid;
+
+CREATE OR REPLACE VIEW public.vw_users_with_uuid
+ AS
+ SELECT users.uuid,
+    users.username,
+    users.password,
+    users.role,
+    users.is_enabled,
+    users.created_at,
+    users.updated_at
+   FROM users;
+
+ALTER TABLE public.vw_users_with_uuid
+    OWNER TO postgres;
+
+
  
