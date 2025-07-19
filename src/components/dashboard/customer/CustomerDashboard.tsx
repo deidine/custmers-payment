@@ -11,6 +11,7 @@ import Pagination from "@/components/ui/Pagination"
 import { useScrollLock } from "@/hooks/useScrollLock"
 import CustomerFilterModal from "./CustomerFilterModal"
 import { useUser } from "@/contexts/UserContext"
+import { useRouter } from "next/navigation" // Import useRouter
  
 const CustomerFormModal = dynamic(() => import("./CustomerFormModal"), {
   loading: () => <div>Loading modal...</div>,
@@ -35,7 +36,7 @@ export default function CustomerDashboard() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [emptyData, setEmptyData] = useState<CustomerCreateDTO>(createEmptyCustomerDto()) // Type emptyData
 
-  // Filter states
+
   const [isFilterExpanded, setIsFilterExpanded] = useState(false)
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
   const [membershipType, setMembershipType] = useState("")
@@ -143,6 +144,7 @@ export default function CustomerDashboard() {
     <>
       {/* Dashboard Options */}
       <div className="flex justify-start items-start gap-2 mb-2">
+
         <button
           className="bg-green-600 text-white px-4 py-2 rounded flex items-center justify-center w-12 h-10"
           onClick={handleRefresh}

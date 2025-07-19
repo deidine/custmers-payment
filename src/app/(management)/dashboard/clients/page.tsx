@@ -5,10 +5,14 @@ import { useRouter } from "next/navigation" // Import useRouter
 import { useFormStatus } from "react-dom" // Still useFormStatus for pending state
 import { useUser } from "@/contexts/UserContext"
 
+import { useSearchParams } from 'next/navigation';
+
 export default function FindClientPage() {
+  const searchParams = useSearchParams();
+  const showOnlyInput = searchParams.get('showOnlyInput');
   const [error, setError] = useState<string | null>(null)
-  const { pending } = useFormStatus() // pending status for the form submission
-  const router = useRouter() // Initialize useRouter
+  const { pending } = useFormStatus() 
+  const router = useRouter() 
  
    async function handleSubmit(formData: FormData) {
     setError(null) // Clear previous errors
@@ -49,6 +53,36 @@ export default function FindClientPage() {
     }
   }
  
+
+  if (showOnlyInput) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+                 <form action={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="clientId" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Client ID
+              </label>
+              <input
+                id="clientId"
+                name="clientId"
+                type="number"
+                placeholder="e.g., 123"
+                required
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-50 dark:ring-offset-gray-950 dark:placeholder:text-gray-600 dark:focus-visible:ring-blue-400"
+              />
+            </div>
+            {error && <p className="text-sm text-red-500 dark:text-red-400">{error}</p>}
+            <button
+              type="submit"
+              className="inline-flex h-10 w-full items-center justify-center whitespace-nowrap rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white ring-offset-white transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus-visible:ring-blue-400"
+              disabled={pending}
+            >
+              {pending ? "Searching..." : "Find Client"}
+            </button>
+          </form>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">

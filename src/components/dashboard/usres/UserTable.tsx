@@ -174,7 +174,8 @@ export default function UserTable({ tableData, rowOptions = [], onRefresh }: Use
                       }}
                       className="text-nowrap text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-3 py-1 text-center hover:underline"
                     >
-                      {"attendance"}
+                     Présence
+
                     </button>
                   )}
                   {/* Delete button */}
