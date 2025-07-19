@@ -3,11 +3,13 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation" // Import useRouter
 import { useFormStatus } from "react-dom" // Still useFormStatus for pending state
+import { useUser } from "@/contexts/UserContext"
 
 export default function FindClientPage() {
   const [error, setError] = useState<string | null>(null)
   const { pending } = useFormStatus() // pending status for the form submission
   const router = useRouter() // Initialize useRouter
+ 
    async function handleSubmit(formData: FormData) {
     setError(null) // Clear previous errors
 

@@ -59,7 +59,7 @@ export function setSessionToken(token: string) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    maxAge: 86_400, // 1 hour
+    maxAge: 86_400, // 1 day
     path: "/",
   });
 }

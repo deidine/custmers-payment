@@ -17,7 +17,7 @@ export const dashboardSideItems = (
   {
     id: DashboardCategoryEnum.CUSTOMERS,
     title: `clients`,
-    options: user?.role === "ADMIN"? [  "UPDATE", "DELETE", "CREATE", "VIEW"] : [ "VIEW"],
+    options: user?.role === "ADMIN"? [  "UPDATE", "DELETE", "CREATE", "VIEW"] : [  "UPDATE", "VIEW","CREATE",],
   },
   {
     id: DashboardCategoryEnum.USERS,
@@ -27,7 +27,7 @@ export const dashboardSideItems = (
   {
     id: DashboardCategoryEnum.PAYMENTS,
     title: "Payments",
-    options: user?.role === "ADMIN"? [  "UPDATE", "DELETE", "CREATE", "VIEW"] : [ "VIEW"],
+    options: user?.role === "ADMIN"? [  "UPDATE", "DELETE", "CREATE", "VIEW"] : [  "CREATE","VIEW"],
   },
   {
     id: DashboardCategoryEnum.NOPAYEDCUSTOMERS,

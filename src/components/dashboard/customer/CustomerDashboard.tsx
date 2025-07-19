@@ -41,7 +41,7 @@ export default function CustomerDashboard() {
   const [membershipType, setMembershipType] = useState("")
   const [status, setStatus] = useState("")
   const [unpaidThisMonth, setUnpaidThisMonth] = useState(false)
-
+ 
   useScrollLock(isCreateModalOpen)
 
   const rowOptions =
@@ -148,7 +148,7 @@ export default function CustomerDashboard() {
           onClick={handleRefresh}
         >
           <RefreshCw className="w-5 h-5" /> {/* Changed to Lucide icon */}
-        </button>
+        </button> 
         {rowOptions.includes("CREATE") && (
           <button
             className="bg-green-600 text-white px-4 py-2 rounded flex items-center justify-center h-10 text-nowrap"
@@ -183,6 +183,7 @@ export default function CustomerDashboard() {
           data={emptyData}
         />
       )}
+      
       <CustomerFilterModal
         isOpen={isFilterModalOpen}
         onClose={() => setIsFilterModalOpen(false)}

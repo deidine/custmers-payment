@@ -178,9 +178,8 @@ export default function RegisterForm() {
                   onChange={(e) => setRole(e.target.value)}
                   className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 transition-all duration-300 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 outline-none bg-white"
                 >
-                  <option value="ADMIN">Rôle</option>
-                  <option value="MANAGER">Admin</option>
-                  <option value="STAFF">Manager</option>
+                  <option value="ADMIN">Admin</option> 
+                  <option value="STAFF">Employés</option>
                 </select>
               </div>
 
